@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node dist/bin/www",
-    "build": "tsc",
+    "start": "tsc && node dist/bin/www",
     "postinstall": "typesync"
   },
   "dependencies": {
