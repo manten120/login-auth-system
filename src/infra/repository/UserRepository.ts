@@ -4,7 +4,7 @@ import { User } from '../../domain/user/User';
 import { UserModel } from '../db/useModel';
 
 export class UserRepository implements IUserRepository {
-  save = async (user: User) => {
+  insert = async (user: User) => {
     await UserModel.create({
       id: user.id.value,
       name: user.name.value,
@@ -15,7 +15,7 @@ export class UserRepository implements IUserRepository {
 
   findByEmail = async (email: Email) => {
     const userData = await UserModel.findByPk(email.encryptedValue);
-    console.log({userData})
+    console.log({ userData });
     if (!userData) {
       return null;
     }

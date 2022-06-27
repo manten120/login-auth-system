@@ -27,7 +27,7 @@ export class CreateTempUserUseCase {
     if (!tempUser) {
       // tempUserを作成、永続化
       const newTempUser = TempUser.create(email);
-      await this.tempUserRepository.save(newTempUser);
+      await this.tempUserRepository.insert(newTempUser);
 
       // Emailを送信
       const createUserMail = new CreateUserMail(newTempUser.email, newTempUser.urlToken);

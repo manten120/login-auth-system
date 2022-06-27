@@ -3,7 +3,7 @@ import { TempUser } from './TempUser';
 
 // 仮登録ユーザーのリポジトリ
 export interface ITempUserRepository {
-  save: (tempUser: TempUser) => Promise<void>;
+  insert: (tempUser: TempUser) => Promise<void>;
   update: (tempUser: TempUser) => Promise<void>;
   findByEmail: (email: Email) => Promise<TempUser | null>;
 }

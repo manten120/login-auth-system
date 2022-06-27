@@ -4,7 +4,7 @@ import { TempUser } from '../../domain/tempUser/TempUser';
 import { TempUserModel } from '../db/TempUserModel';
 
 export class TempUserRepository implements ITempUserRepository {
-  save = async (tempUser: TempUser) => {
+  insert = async (tempUser: TempUser) => {
     await TempUserModel.create({
       email: tempUser.email.encryptedValue,
       url_token: tempUser.urlToken.value,
