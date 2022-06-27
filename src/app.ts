@@ -7,7 +7,7 @@ import logger from 'morgan';
 import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
 import { userRouter } from './routes/user';
-import { TempUserModel } from './infra/db/tempUserModel';
+import { TempUserModel } from './infra/db/TempUserModel';
 import { UserModel } from './infra/db/useModel';
 
 

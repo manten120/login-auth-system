@@ -1,11 +1,10 @@
 import { Email } from '../../domain/user/Email';
 import { ITempUserRepository } from '../../domain/tempUser/ITempUserRepository';
 import { TempUser } from '../../domain/tempUser/TempUser';
-import { TempUserModel } from '../db/tempUserModel';
+import { TempUserModel } from '../db/TempUserModel';
 
 export class TempUserRepository implements ITempUserRepository {
   save = async (tempUser: TempUser) => {
-
     await TempUserModel.create({
       email: tempUser.email.encryptedValue,
       url_token: tempUser.urlToken.value,
