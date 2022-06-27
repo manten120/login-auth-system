@@ -8,13 +8,20 @@
     <h1><%= title %></h1>
     <p><%= message %></p>
 
-    <form method="post" action="/register">
+    <form method="post" action="/register" onsubmit="disableSubmit()">
       <div>
         <label for="email">Eメールアドレス：</label>
         <input type="email" id="email" name="email" />
       </div>
-        <input type="submit" value="決定" />
+        <input id="submit" type="submit" value="登録する"/>
       </div>
     </form>
   </body>
+  <script>
+    function disableSubmit() {
+      const button = document.getElementById('submit');
+      button.disabled = true;
+      button.value = '送信中....';
+    }
+  </script>
 </html>
