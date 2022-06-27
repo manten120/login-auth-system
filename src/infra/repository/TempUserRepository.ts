@@ -2,6 +2,7 @@ import { Email } from '../../domain/user/Email';
 import { ITempUserRepository } from '../../domain/tempUser/ITempUserRepository';
 import { TempUser } from '../../domain/tempUser/TempUser';
 import { TempUserModel } from '../db/TempUserModel';
+import { UrlToken } from '../../domain/tempUser/UrlToken';
 
 export class TempUserRepository implements ITempUserRepository {
   insert = async (tempUser: TempUser) => {
@@ -25,6 +26,23 @@ export class TempUserRepository implements ITempUserRepository {
 
   findByEmail = async (email: Email) => {
     const tempUserData = await TempUserModel.findByPk(email.encryptedValue);
+
+    if (!tempUserData) {
+      return null;
+    }
+
+    const tempUser = TempUser.reconstruct({
+      emailEncryptedValue: tempUserData.email,
+      urlTokenValue: tempUserData.url_token,
+      expiredAtValue: tempUserData.expired_at,
+      repeatedTimesValue: tempUserData.repeated_times,
+    });
+
+    return tempUser;
+  };
+
+  findByToken = async (token: UrlToken) => {
+    const tempUserData = await TempUserModel.findOne({ where: { url_token: token.value } });
 
     if (!tempUserData) {
       return null;

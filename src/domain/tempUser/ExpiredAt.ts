@@ -14,4 +14,12 @@ export class ExpiredAt {
   static readonly reconstruct = (expiredAtValue: string) => new ExpiredAt(expiredAtValue);
 
   readonly extend = () => ExpiredAt.create();
+
+  readonly isPast = () => {
+    const diff = Date.parse(this.value) - Date.now();
+    if (diff < 0) {
+      return true;
+    }
+    return false;
+  }
 }

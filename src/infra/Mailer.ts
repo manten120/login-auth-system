@@ -17,7 +17,7 @@ class Mailer implements IMailer {
 
   // transporter = transporter;
 
-  readonly send = (mail: IMail) => {
+  readonly send = async (mail: IMail) => {
     const data = {
       from: `"${mail.from}" <${process.env.MAIL_USER}>`, // 宛先がyahooメールの場合日本語は文字化けする。gmailはしない。<foo@example.com>を削除すると通常のメールアドレス表示になってしまう。
       to: mail.to,
@@ -26,13 +26,14 @@ class Mailer implements IMailer {
       subject: mail.subject,
     };
 
-    this.transporter.sendMail(data, (error: any, info: any) => {
-      if (error) {
-        console.log(error); // エラー情報
-      } else {
-        console.log(info); // 送信したメールの情報
-      }
-    });
+    try{
+      const result = await this.transporter.sendMail(data);
+      console.log(result);
+      return true;
+    } catch(e: any) {
+      console.log(e);
+      return false;
+    }
   };
 }
 

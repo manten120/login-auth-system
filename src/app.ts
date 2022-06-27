@@ -8,7 +8,7 @@ import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
 import { userRouter } from './routes/user';
 import { TempUserModel } from './infra/db/TempUserModel';
-import { UserModel } from './infra/db/useModel';
+import { UserModel } from './infra/db/UserModel';
 
 
 // DBテーブル作成
@@ -25,7 +25,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/', indexRouter);
 app.use('/register', registerRouter);

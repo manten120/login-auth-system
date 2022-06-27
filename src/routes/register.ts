@@ -6,28 +6,39 @@ import { TempUserRepository } from '../infra/repository/TempUserRepository';
 import { UserRepository } from '../infra/repository/UserRepository';
 import { CreateTempUserUseCase } from '../useCase/CreateTempUserUseCase';
 import { mailer } from '../infra/Mailer';
+import { Email } from '../domain/user/Email';
 const tempUserRepository = new TempUserRepository();
 const userRepository = new UserRepository();
 const createTempUserUseCase = new CreateTempUserUseCase(userRepository, tempUserRepository, mailer);
 
 router.get('/', (req, res, _next) => {
-  console.log(req.query.message);
   res.render('emailForm', { title: 'ユーザーアカウントを作成する画面', message: req.query.message });
 });
 
 router.post('/', async (req, res, _next) => {
-  const email = req.body.emailAddress as string;
+  const email = req.body.email as string;
+
+  if (!Email.isValid(email)) {
+    return res.redirect('/register');
+  }
+
   const result = await createTempUserUseCase.execute(email);
 
   if (result.ok) {
-    // 成功したら「メールを送信しました」
-    res.redirect('/register/emailed');
+    return res.redirect('/register/emailed');
   }
 
-  // 失敗したら「登録済みのメールアドレスです」
-  // res.redirect('/register?message=登録済みのメールアドレスです');
+  if (result.reason === 'alreadyRegistered') {
+    return res.redirect('/register?message=登録済みのメールアドレスです');
+  }
 
-  // エラーがおきたら?
+  if (result.reason === 'exceeded') {
+    return res.redirect('/register?message=しばらく時間をおいてから試してください');
+  }
+
+  if (result.reason === 'emailFailed') {
+    return res.redirect('/register?message=正しいメールアドレスを入力してください');
+  }
 });
 
 router.get('/emailed', (_req, res, _next) => {
@@ -37,9 +48,7 @@ router.get('/emailed', (_req, res, _next) => {
   });
 });
 
-router.get('/again', (_req, res, _next) => {
-  res.render('emailForm', { title: 'ユーザーアカウントを作成する画面' });
-});
+router.post('/emailed', (req, res, _next) => {});
 
 router.get('/details', (req, res, _next) => {
   const { token } = req.query;

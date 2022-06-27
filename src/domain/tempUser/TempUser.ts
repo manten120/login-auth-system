@@ -37,4 +37,6 @@ export class TempUser {
   readonly repeatReceivingMail = () => { this.repeatedTimes = this.repeatedTimes.increment() };
 
   readonly canRepeatReceivingMail = () => !this.repeatedTimes.isMax();
+
+  readonly isExpired = () => this.expiredAt.isPast();
 }

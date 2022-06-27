@@ -15,15 +15,15 @@ export class CreateTempUserUseCase {
   readonly execute = async (emailPlainValue: string) => {
     const email = Email.create(emailPlainValue);
 
-    // userと重複しているならば仮登録不可
+    // メールアドレスが既存ユーザーと重複しているならば仮登録不可
     const user = await this.userRepository.findByEmail(email);
     if (user) {
-      return { ok: false, reason: 'registered', message: '登録済みのメールアドレスです' };
+      return { ok: false, reason: 'alreadyRegistered' };
     }
 
     const tempUser = await this.tempUserRepository.findByEmail(email);
 
-    // 同一メールアドレスのtempUserが存在しないとき
+    // 同一メールアドレスの仮登録ユーザーが存在しないとき
     if (!tempUser) {
       // tempUserを作成、永続化
       const newTempUser = TempUser.create(email);
@@ -31,26 +31,32 @@ export class CreateTempUserUseCase {
 
       // Emailを送信
       const createUserMail = new CreateUserMail(newTempUser.email, newTempUser.urlToken);
-      this.mailer.send(createUserMail);
+      const isSucceeded = await this.mailer.send(createUserMail);
 
-      return { ok: true, reason: 'mailed', message: '' };
+      if (isSucceeded) {
+        return { ok: true, reason: 'mailed' };
+      }
+
+      return { ok: false, reason: 'emailFailed' };
     }
 
-    // tempUserと重複しているならば...
+    // メールアドレスが既存の仮登録ユーザーと重複しているとき
     if (tempUser && tempUser.canRepeatReceivingMail()) {
       tempUser.repeatReceivingMail();
-
-      console.log(tempUser.repeatedTimes.value);
-
-      await this.tempUserRepository.update(tempUser);
+      this.tempUserRepository.update(tempUser);
 
       // Emailを送信
       const createUserMail = new CreateUserMail(tempUser.email, tempUser.urlToken);
-      this.mailer.send(createUserMail);
+      const isSucceeded = await this.mailer.send(createUserMail);
 
-      return { ok: true, reason: 'mailed', message: '' };
+      if (isSucceeded) {
+        return { ok: true, reason: 'mailed' };
+      }
+
+      return { ok: false, reason: 'emailFailed' };
     }
 
-    return { ok: false, reason: 'exceeded', message: '回数が多すぎです' };
+    // 短時間で仮登録を繰り返したとき
+    return { ok: false, reason: 'exceeded' };
   };
 }
