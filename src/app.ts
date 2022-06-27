@@ -1,11 +1,19 @@
+import 'dotenv/config'; // expressより前にimportすること
 import createError from 'http-errors';
-import express, { Request, Response, NextFunction, RequestHandler } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-
 import { indexRouter } from './routes/index';
-import { usersRouter } from './routes/users';
+import { registerRouter } from './routes/register';
+import { userRouter } from './routes/user';
+import { TempUserModel } from './infra/db/tempUserModel';
+import { UserModel } from './infra/db/useModel';
+
+
+// DBテーブル作成
+TempUserModel.sync();
+UserModel.sync();
 
 const app = express();
 
@@ -20,7 +28,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/register', registerRouter);
+app.use('/user', userRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
