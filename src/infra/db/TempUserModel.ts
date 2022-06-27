@@ -5,12 +5,14 @@ export type TempUserModelAttributes = {
   email: string;
   url_token: string;
   expired_at: string;
+  repeated_times: number;
 };
 
 export class TempUserModel extends Model<TempUserModelAttributes> {
   declare email: string;
   declare url_token: string;
   declare expired_at: string;
+  declare repeated_times: number;
 }
 
 TempUserModel.init(
@@ -26,6 +28,10 @@ TempUserModel.init(
     },
     expired_at: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    repeated_times: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

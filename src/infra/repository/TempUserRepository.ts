@@ -9,7 +9,18 @@ export class TempUserRepository implements ITempUserRepository {
       email: tempUser.email.encryptedValue,
       url_token: tempUser.urlToken.value,
       expired_at: tempUser.expiredAt.value,
+      repeated_times: tempUser.repeatedTimes.value,
     });
+  };
+
+  update = async (tempUser: TempUser) => {
+    await TempUserModel.update(
+      {
+        expired_at: tempUser.expiredAt.value,
+        repeated_times: tempUser.repeatedTimes.value,
+      },
+      { where: { email: tempUser.email.encryptedValue } }
+    );
   };
 
   findByEmail = async (email: Email) => {
@@ -23,6 +34,7 @@ export class TempUserRepository implements ITempUserRepository {
       emailEncryptedValue: tempUserData.email,
       urlTokenValue: tempUserData.url_token,
       expiredAtValue: tempUserData.expired_at,
+      repeatedTimesValue: tempUserData.repeated_times,
     });
 
     return tempUser;

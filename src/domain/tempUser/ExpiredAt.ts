@@ -12,4 +12,6 @@ export class ExpiredAt {
   };
 
   static readonly reconstruct = (expiredAtValue: string) => new ExpiredAt(expiredAtValue);
+
+  readonly extend = () => ExpiredAt.create();
 }

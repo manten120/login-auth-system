@@ -37,17 +37,20 @@ export class CreateTempUserUseCase {
     }
 
     // tempUserと重複しているならば...
-    if (tempUser && !tempUser) {
-      return { ok: false, reason: 'exceeded', message: '回数が多すぎです' };
+    if (tempUser && tempUser.canRepeatReceivingMail()) {
+      tempUser.repeatReceivingMail();
+
+      console.log(tempUser.repeatedTimes.value);
+
+      await this.tempUserRepository.update(tempUser);
+
+      // Emailを送信
+      const createUserMail = new CreateUserMail(tempUser.email, tempUser.urlToken);
+      this.mailer.send(createUserMail);
+
+      return { ok: true, reason: 'mailed', message: '' };
     }
 
-
-    await this.tempUserRepository.save(tempUser);
-
-    // Emailを送信
-    const createUserMail = new CreateUserMail(tempUser.email, tempUser.urlToken);
-    this.mailer.send(createUserMail);
-
-    return { ok: true, reason: 'mailed', message: '' };
+    return { ok: false, reason: 'exceeded', message: '回数が多すぎです' };
   };
 }
