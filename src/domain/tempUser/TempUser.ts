@@ -20,21 +20,26 @@ export class TempUser {
   };
 
   static readonly reconstruct = (argsObj: {
+    emailHashedValue: string;
     emailEncryptedValue: string;
     urlTokenValue: string;
     expiredAtValue: string;
     repeatedTimesValue: number;
   }) => {
-    const email = Email.reconstruct(argsObj.emailEncryptedValue);
+    const email = Email.reconstruct(argsObj.emailHashedValue, argsObj.emailEncryptedValue);
     const url_token = UrlToken.reconstruct(argsObj.urlTokenValue);
     const expiredAt = ExpiredAt.reconstruct(argsObj.expiredAtValue);
     const repeatedTimes = RepeatedTimes.reconstruct(argsObj.repeatedTimesValue);
     return new TempUser(email, url_token, expiredAt, repeatedTimes);
   };
 
-  readonly extendDeadLine = () => { this.expiredAt = this.expiredAt.extend() };
+  readonly extendDeadLine = () => {
+    this.expiredAt = this.expiredAt.extend();
+  };
 
-  readonly repeatReceivingMail = () => { this.repeatedTimes = this.repeatedTimes.increment() };
+  readonly repeatReceivingMail = () => {
+    this.repeatedTimes = this.repeatedTimes.increment();
+  };
 
   readonly canRepeatReceivingMail = () => !this.repeatedTimes.isMax();
 

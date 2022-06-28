@@ -7,7 +7,8 @@ import { UrlToken } from '../../domain/tempUser/UrlToken';
 export class TempUserRepository implements ITempUserRepository {
   insert = async (tempUser: TempUser) => {
     await TempUserModel.create({
-      email: tempUser.email.encryptedValue,
+      hashed_email: tempUser.email.hashedValue,
+      encrypted_email: tempUser.email.encryptedValue,
       url_token: tempUser.urlToken.value,
       expired_at: tempUser.expiredAt.value,
       repeated_times: tempUser.repeatedTimes.value,
@@ -20,19 +21,20 @@ export class TempUserRepository implements ITempUserRepository {
         expired_at: tempUser.expiredAt.value,
         repeated_times: tempUser.repeatedTimes.value,
       },
-      { where: { email: tempUser.email.encryptedValue } }
+      { where: { hashed_email: tempUser.email.hashedValue } }
     );
   };
 
   findByEmail = async (email: Email) => {
-    const tempUserData = await TempUserModel.findByPk(email.encryptedValue);
+    const tempUserData = await TempUserModel.findByPk(email.hashedValue);
 
     if (!tempUserData) {
       return null;
     }
 
     const tempUser = TempUser.reconstruct({
-      emailEncryptedValue: tempUserData.email,
+      emailHashedValue: tempUserData.hashed_email,
+      emailEncryptedValue: tempUserData.encrypted_email,
       urlTokenValue: tempUserData.url_token,
       expiredAtValue: tempUserData.expired_at,
       repeatedTimesValue: tempUserData.repeated_times,
@@ -41,15 +43,16 @@ export class TempUserRepository implements ITempUserRepository {
     return tempUser;
   };
 
-  findByToken = async (token: UrlToken) => {
-    const tempUserData = await TempUserModel.findOne({ where: { url_token: token.value } });
+  findByUrlToken = async (urlToken: UrlToken) => {
+    const tempUserData = await TempUserModel.findOne({ where: { url_token: urlToken.value } });
 
     if (!tempUserData) {
       return null;
     }
 
     const tempUser = TempUser.reconstruct({
-      emailEncryptedValue: tempUserData.email,
+      emailHashedValue: tempUserData.hashed_email,
+      emailEncryptedValue: tempUserData.encrypted_email,
       urlTokenValue: tempUserData.url_token,
       expiredAtValue: tempUserData.expired_at,
       repeatedTimesValue: tempUserData.repeated_times,
@@ -57,4 +60,8 @@ export class TempUserRepository implements ITempUserRepository {
 
     return tempUser;
   };
+
+  delete = async (tempUser: TempUser) => {
+    TempUserModel.destroy({where: { hashed_email: tempUser.email.hashedValue }});
+  }
 }

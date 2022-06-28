@@ -5,6 +5,13 @@ import { ITempUserRepository } from '../domain/tempUser/ITempUserRepository';
 import { IMailer } from '../domain/mailer/IMailer';
 import { CreateUserMail } from '../domain/mailer/CreateUserMail';
 
+type Result = {
+  ok: false;
+  reason: 'userAlreadyRegistered' | 'sendingEmailFailed' | 'exceeded';
+} | {
+  ok: true;
+}
+
 export class CreateTempUserUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
@@ -12,13 +19,20 @@ export class CreateTempUserUseCase {
     private readonly mailer: IMailer
   ) {}
 
-  readonly execute = async (emailPlainValue: string) => {
+  private readonly sendCreateUserMailTo = async (tempUser: TempUser) => {
+    const createUserMail = new CreateUserMail(tempUser.email, tempUser.urlToken);
+    const isSucceeded = await this.mailer.send(createUserMail);
+    return isSucceeded;
+  }
+
+  readonly execute = async (emailPlainValue: string): Promise<Result> => {
     const email = Email.create(emailPlainValue);
 
-    // メールアドレスが既存ユーザーと重複しているならば仮登録不可
+    // メールアドレスがユーザーと重複しているならば仮登録不可
     const user = await this.userRepository.findByEmail(email);
+    console.log('foo', {user})
     if (user) {
-      return { ok: false, reason: 'alreadyRegistered' };
+      return { ok: false, reason: 'userAlreadyRegistered' };
     }
 
     const tempUser = await this.tempUserRepository.findByEmail(email);
@@ -29,31 +43,34 @@ export class CreateTempUserUseCase {
       const newTempUser = TempUser.create(email);
       await this.tempUserRepository.insert(newTempUser);
 
-      // Emailを送信
-      const createUserMail = new CreateUserMail(newTempUser.email, newTempUser.urlToken);
-      const isSucceeded = await this.mailer.send(createUserMail);
+      // 登録手続きメールを送信
+      const isSucceeded = await this.sendCreateUserMailTo(newTempUser);
 
       if (isSucceeded) {
-        return { ok: true, reason: 'mailed' };
+        return { ok: true };
       }
 
-      return { ok: false, reason: 'emailFailed' };
+      return { ok: false, reason: 'sendingEmailFailed' };
     }
 
-    // メールアドレスが既存の仮登録ユーザーと重複しているとき
+    // 仮登録ユーザーの期限を延長する
+    tempUser.extendDeadLine();
+
+    // 仮登録済みのとき
     if (tempUser && tempUser.canRepeatReceivingMail()) {
+
+      // 仮登録を繰り返した回数を更新する
       tempUser.repeatReceivingMail();
       this.tempUserRepository.update(tempUser);
 
-      // Emailを送信
-      const createUserMail = new CreateUserMail(tempUser.email, tempUser.urlToken);
-      const isSucceeded = await this.mailer.send(createUserMail);
+      // 登録手続きメールを送信
+      const isSucceeded = await this.sendCreateUserMailTo(tempUser);
 
       if (isSucceeded) {
-        return { ok: true, reason: 'mailed' };
+        return { ok: true };
       }
 
-      return { ok: false, reason: 'emailFailed' };
+      return { ok: false, reason: 'sendingEmailFailed' };
     }
 
     // 短時間で仮登録を繰り返したとき

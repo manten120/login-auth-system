@@ -7,5 +7,6 @@ export interface ITempUserRepository {
   insert: (tempUser: TempUser) => Promise<void>;
   update: (tempUser: TempUser) => Promise<void>;
   findByEmail: (email: Email) => Promise<TempUser | null>;
-  findByToken: (token: UrlToken) => Promise<TempUser | null>;
+  findByUrlToken: (urlToken: UrlToken) => Promise<TempUser | null>;
+  delete: (tempUser: TempUser) => Promise<void>;
 }

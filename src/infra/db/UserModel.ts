@@ -4,14 +4,16 @@ import sequelize from './sequelize-loader';
 export type UserModelAttributes = {
   id: string;
   name: string;
-  email: string;
+  hashed_email: string;
+  encrypted_email: string;
   password: string;
 };
 
 export class UserModel extends Model<UserModelAttributes> {
   declare id: string;
   declare name: string;
-  declare email: string;
+  declare hashed_email: string;
+  declare encrypted_email: string;
   declare password: string;
 }
 
@@ -25,7 +27,12 @@ UserModel.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: {
+    hashed_email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+    },
+    encrypted_email: {
       type: DataTypes.STRING,
       allowNull: false,
     },

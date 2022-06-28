@@ -3,7 +3,7 @@ export class UserName {
 
   static readonly MIN_LENGTH = 1;
 
-  static readonly MAX_LENGTH = 10;
+  static readonly MAX_LENGTH = 30;
 
   static readonly create = (userNameValue: string) => {
     if (userNameValue.length < this.MIN_LENGTH) {

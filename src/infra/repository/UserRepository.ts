@@ -1,7 +1,6 @@
-import { UrlToken } from '../../domain/tempUser/UrlToken';
-import { Email } from '../../domain/user/Email';
 import { IUserRepository } from '../../domain/user/IUserRepository';
 import { User } from '../../domain/user/User';
+import { Email } from '../../domain/user/Email';
 import { UserModel } from '../db/UserModel';
 
 export class UserRepository implements IUserRepository {
@@ -9,13 +8,15 @@ export class UserRepository implements IUserRepository {
     await UserModel.create({
       id: user.id.value,
       name: user.name.value,
-      email: user.email.encryptedValue,
+      hashed_email: user.email.hashedValue,
+      encrypted_email: user.email.encryptedValue,
       password: user.password.hashedValue,
     });
   };
 
   findByEmail = async (email: Email) => {
-    const userData = await UserModel.findByPk(email.encryptedValue);
+    const userData = await UserModel.findOne({ where: { hashed_email: email.hashedValue } });
+
     console.log({ userData });
     if (!userData) {
       return null;
@@ -24,7 +25,8 @@ export class UserRepository implements IUserRepository {
     const user = User.reconstruct({
       userIdValue: userData.id,
       userNameValue: userData.name,
-      encryptedEmailValue: userData.email,
+      hashedEmailValue: userData.hashed_email,
+      encryptedEmailValue: userData.encrypted_email,
       hashedPasswordValue: userData.password,
     });
 

@@ -6,24 +6,66 @@
   </head>
   <body>
     <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
 
-    <form method="post" action="/userAccount/register">
+    <form method="post" action="/register/details">
+      <input hidden type="text" id="urlToken" name="urlToken" value=<%= urlToken %>/>
       <div>
         <label for="name">ユーザー名：</label>
-        <input type="text" id="name" name="name" />
+        <input type="text" id="name" name="name" required />
       </div>
       <div>
-        <label for="password">パスワード：</label>
-        <input type="text" id="password" name="password" />
+        <label for="password1">パスワード：</label>
+        <input type="password" id="password1" name="password1" required pattern="[a-zA-Z0-9]{8,64}"/>
+        <button id="passwordButton1">表示</button>
       </div>
       <div>
-        <label for="passwordConfirmation">パスワード(確認用)：</label>
-        <input type="text" id="passwordConfirmation" name="passwordConfirmation" />
+        <label for="password2">パスワード(確認用)：</label>
+        <input type="password" id="password2" name="password2" required pattern="[a-zA-Z0-9]{8,64}"/>
+        <button id="passwordButton2">表示</button>
       </div>
       <div>
-        <input type="submit" value="決定" />
+        <button type="submit" onclick="twoPasswordsMatch()">決定</button>
       </div>
     </form>
   </body>
+
+  <script>
+    // パスワード表示・非表示を切り替える
+    const passwordInput1 = document.getElementById('password1');
+    const passwordButton1 = document.getElementById('passwordButton1');
+    passwordButton1.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (passwordInput1.type === 'password') {
+        passwordInput1.type = 'text';
+        passwordButton1.textContent = '非表示';
+        return;
+      }
+      passwordInput1.type = 'password';
+      passwordButton1.textContent = '表示';
+    });
+    const passwordInput2 = document.getElementById('password2');
+    const passwordButton2 = document.getElementById('passwordButton2');
+    passwordButton2.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (passwordInput2.type === 'password') {
+        passwordInput2.type = 'text';
+        passwordButton2.textContent = '非表示';
+        return;
+      }
+      passwordInput2.type = 'password';
+      passwordButton2.textContent = '表示';
+    });
+
+    // パスワードが一致するかチェックする
+    const twoPasswordsMatch = () => {
+      const password1 = document.getElementById('password1');
+      const password2 = document.getElementById('password2');
+      if (password1.value !== password2.value) {
+        password2.setCustomValidity("入力値が一致しません。");
+        password2.addEventListener('input', () => {
+          password2.setCustomValidity("");
+        })
+      }
+    }
+  </script>
 </html>

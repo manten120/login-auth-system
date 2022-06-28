@@ -2,14 +2,16 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from './sequelize-loader';
 
 export type TempUserModelAttributes = {
-  email: string;
+  hashed_email: string;
+  encrypted_email: string;
   url_token: string;
   expired_at: string;
   repeated_times: number;
 };
 
 export class TempUserModel extends Model<TempUserModelAttributes> {
-  declare email: string;
+  declare hashed_email: string;
+  declare encrypted_email: string;
   declare url_token: string;
   declare expired_at: string;
   declare repeated_times: number;
@@ -17,10 +19,14 @@ export class TempUserModel extends Model<TempUserModelAttributes> {
 
 TempUserModel.init(
   {
-    email: {
+    hashed_email: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
+    },
+    encrypted_email: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     url_token: {
       type: DataTypes.STRING,
