@@ -16,12 +16,12 @@
       <div>
         <label for="password1">パスワード：</label>
         <input type="password" id="password1" name="password1" required pattern="[a-zA-Z0-9]{8,64}"/>
-        <button id="passwordButton1">表示</button>
+        <button type="button" id="passwordButton1" onclick="toggleVisible(1)">表示</button>
       </div>
       <div>
         <label for="password2">パスワード(確認用)：</label>
         <input type="password" id="password2" name="password2" required pattern="[a-zA-Z0-9]{8,64}"/>
-        <button id="passwordButton2">表示</button>
+        <button type="button" id="passwordButton2" onclick="toggleVisible(2)">表示</button>
       </div>
       <div>
         <button type="submit" onclick="twoPasswordsMatch()">決定</button>
@@ -31,30 +31,18 @@
 
   <script>
     // パスワード表示・非表示を切り替える
-    const passwordInput1 = document.getElementById('password1');
-    const passwordButton1 = document.getElementById('passwordButton1');
-    passwordButton1.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (passwordInput1.type === 'password') {
-        passwordInput1.type = 'text';
-        passwordButton1.textContent = '非表示';
+    const toggleVisible = (number) => {
+      const passwordInput = document.getElementById(`password${number}`);
+      const passwordButton = document.getElementById(`passwordButton${number}`);
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordButton.textContent = '非表示';
         return;
       }
-      passwordInput1.type = 'password';
-      passwordButton1.textContent = '表示';
-    });
-    const passwordInput2 = document.getElementById('password2');
-    const passwordButton2 = document.getElementById('passwordButton2');
-    passwordButton2.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (passwordInput2.type === 'password') {
-        passwordInput2.type = 'text';
-        passwordButton2.textContent = '非表示';
-        return;
-      }
-      passwordInput2.type = 'password';
-      passwordButton2.textContent = '表示';
-    });
+      passwordInput.type = 'password';
+      passwordButton.textContent = '表示';
+    }
 
     // パスワードが一致するかチェックする
     const twoPasswordsMatch = () => {
