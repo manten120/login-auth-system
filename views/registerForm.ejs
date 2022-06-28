@@ -11,16 +11,17 @@
       <input hidden type="text" id="urlToken" name="urlToken" value=<%= urlToken %>/>
       <div>
         <label for="name">ユーザー名：</label>
-        <input type="text" id="name" name="name" required />
+        <input type="text" id="name" name="name" required placeholder="30文字まで"/>
       </div>
       <div>
         <label for="password1">パスワード：</label>
-        <input type="password" id="password1" name="password1" required pattern="[a-zA-Z0-9]{8,64}"/>
+        <input type="password" id="password1" name="password1" required pattern="[a-zA-Z0-9]{8,64}" placeholder="半角英数で8~64文字"/>
         <button type="button" id="passwordButton1" onclick="toggleVisible(1)">表示</button>
+
       </div>
       <div>
-        <label for="password2">パスワード(確認用)：</label>
-        <input type="password" id="password2" name="password2" required pattern="[a-zA-Z0-9]{8,64}"/>
+        <label for="password2">パスワード：</label>
+        <input type="password" id="password2" name="password2" required pattern="[a-zA-Z0-9]{8,64}" placeholder="確認用"/>
         <button type="button" id="passwordButton2" onclick="toggleVisible(2)">表示</button>
       </div>
       <div>
