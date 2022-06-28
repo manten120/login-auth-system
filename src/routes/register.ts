@@ -14,45 +14,54 @@ const tempUserRepository = new TempUserRepository();
 const userRepository = new UserRepository();
 const createTempUserUseCase = new CreateTempUserUseCase(userRepository, tempUserRepository, mailer);
 const checkUrlTokenUseCase = new CheckUrlTokenUseCase(tempUserRepository);
-const createUserUseCase = new CreateUserUseCase(tempUserRepository, userRepository)
+const createUserUseCase = new CreateUserUseCase(tempUserRepository, userRepository);
 
 // ユーザーアカウント作成を開始する
-router.get('/', (req, res, _next) => {
+router.get('/', (req, res, next) => {
   res.render('emailForm', { title: 'ユーザーアカウントを作成する画面1', message: req.query.message });
 });
 
-router.post('/', async (req, res, _next) => {
-  const email = req.body.email;
+router.post('/', async (req, res, next) => {
+  (async () => {
+    const email = req.body.email;
 
-  // 明らかにEメールアドレスではない値がPOSTされたとき
-  if (typeof email !== 'string' || !Email.isValid(email)) {
-    return res.redirect('/register');
-  }
+    // 明らかにEメールアドレスではない値がPOSTされたとき
+    if (typeof email !== 'string' || !Email.isValid(email)) {
+      return res.redirect('/register');
+    }
 
-  const result = await createTempUserUseCase.execute(email);
+    const result = await createTempUserUseCase.execute(email);
 
-  // 仮登録ユーザーを作成できたとき
-  if (result.ok) {
-    // 登録手続きを進めるためのEメールを送信したことを表示する
-    return res.redirect('/register/emailed');
-  }
+    // 仮登録ユーザーを作成できたとき
+    if (result.ok) {
+      // 登録手続きを進めるためのEメールを送信したことを表示する
+      return res.redirect('/register/emailed');
+    }
 
-  // Eメールアドレスが登録済みのとき
-  if (result.reason === 'userAlreadyRegistered') {
-    return res.redirect('/register?message=登録済みのメールアドレスです');
-  }
+    // Eメールアドレスが登録済みのとき
+    if (result.reason === 'userAlreadyRegistered') {
+      return res.redirect('/register?message=登録済みのメールアドレスです');
+    }
 
-  // Eメールアドレス登録を過度に繰り返すとき
-  if (result.reason === 'exceeded') {
-    return res.redirect('/register?message=しばらく時間をおいてから試してください');
-  }
+    // Eメールアドレス登録を過度に繰り返すとき
+    if (result.reason === 'exceeded') {
+      return res.redirect('/register?message=しばらく時間をおいてから試してください');
+    }
 
-  // 明らかにEメールアドレスではない文字列がPOSTされたとき
-  if (result.reason === 'sendingEmailFailed') {
-    return res.redirect('/register?message=正しいメールアドレスを入力してください');
-  }
+    // 登録手続きメールの送信に失敗した時
+    // 明らかにEメールアドレスではない文字列がPOSTされたとき
+    if (result.reason === 'sendingEmailFailed') {
+      return res.redirect('/register?message=メールの送信に失敗しました。申し訳ありません。しばらく時間をおいてから試してください。');
+    }
 
-  return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+    return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+  })().catch((e) => {
+    console.log('env', req.app.get('env'))
+    if (req.app.get('env') === 'production') {
+      res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+    }
+    next(e)
+  });
 });
 
 router.get('/emailed', (_req, res, _next) => {
@@ -62,38 +71,37 @@ router.get('/emailed', (_req, res, _next) => {
   });
 });
 
-// TODO: メールを再送する
-// router.post('/emailed', (req, res, _next) => {});
+router.get('/details', async (req, res, next) => {
+  (async () => {
+    const urlToken = req.query.t;
 
-router.get('/details', async (req, res, _next) => {
-  const urlToken = req.query.t;
+    // urlTokenがundefinedまたはurlTokenのフォーマットがuuidでないとき
+    //
+    if (typeof urlToken !== 'string' || !UrlToken.isUUID(urlToken)) {
+      return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
+    }
 
-  // urlTokenがundefinedまたはurlTokenのフォーマットがuuidでないとき
-  // 
-  if (typeof urlToken !== 'string' || !UrlToken.isUUID(urlToken)) {
-    return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
-  }
+    // urlTokenが有効かチェック
+    const result = await checkUrlTokenUseCase.execute(urlToken);
 
-  // urlTokenが有効かチェック
-  const result = await checkUrlTokenUseCase.execute(urlToken);
+    // 有効ならばフォームを表示
+    if (result.ok) {
+      return res.render('registerForm', { title: 'ユーザーアカウントを作成する画面', urlToken });
+    }
 
-  // 有効ならばフォームを表示
-  if (result.ok) {
-    return res.render('registerForm', { title: 'ユーザーアカウントを作成する画面', urlToken });
-  }
+    // 無効(期限切れ)ならばその旨とEメールアドレス登録フォームを表示する
+    if (result.reason === 'expired') {
+      return res.redirect('/register?message=期限切れです。最初からやり直してください。');
+    }
 
-  // 無効(期限切れ)ならばその旨とEメールアドレス登録フォームを表示する
-  if (result.reason === 'expired') {
-    return res.redirect('/register?message=期限切れです。最初からやり直してください。');
-  }
+    // 無効ならばその旨とEメールアドレス登録フォームを表示する
+    // urlTokenと紐づく仮登録ユーザーが存在しないとき
+    if (result.reason === 'notExist') {
+      return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
+    }
 
-  // 無効ならばその旨とEメールアドレス登録フォームを表示する
-  // urlTokenと紐づく仮登録ユーザーが存在しないとき
-  if (result.reason === 'notExist') {
-    return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
-  }
-
-  return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+    return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+  })().catch(next);
 });
 
 const removeSlash = (urlToken: any) => {
@@ -107,35 +115,42 @@ const removeSlash = (urlToken: any) => {
   return urlToken;
 };
 
-// 
-router.post('/details', async (req, res, _next) => {
-  const { name, password1, password2 } = req.body;
+//
+router.post('/details', async (req, res, next) => {
+  (async () => {
+    const { name, password1, password2 } = req.body;
 
-  // urlTokenの末尾になぜか/がついてしまうので削除する
-  const urlToken = removeSlash(req.body.urlToken);
+    // urlTokenの末尾になぜか/がついてしまうので削除する
+    const urlToken = removeSlash(req.body.urlToken);
 
-  console.log('typeof...', typeof name)
-  console.log({ name, password1, password2 })
+    console.log('typeof...', typeof name);
+    console.log({ name, password1, password2 });
 
-  if (
-    typeof name !== 'string' &&
-    typeof password1 !== 'string' &&
-    typeof password2 !== 'string' &&
-    typeof urlToken !== 'string'
-  ) {
-    // エラー
-  }
+    if (
+      typeof name !== 'string' &&
+      typeof password1 !== 'string' &&
+      typeof password2 !== 'string' &&
+      typeof urlToken !== 'string'
+    ) {
+      // エラー
+    }
 
-  const result = await createUserUseCase.execute({ userNameValue: name, urlTokenValue: urlToken, password1, password2 });
+    const result = await createUserUseCase.execute({
+      userNameValue: name,
+      urlTokenValue: urlToken,
+      password1,
+      password2,
+    });
 
-  if (result.ok) {
-    return
-  }
+    if (result.ok) {
+      return;
+    }
 
-  // 期限切れのとき
-  if (result.reason === 'expired') {
-    return res.redirect('/register?message=期限切れです。最初からやり直してください。');
-  }
+    // 期限切れのとき
+    if (result.reason === 'expired') {
+      return res.redirect('/register?message=期限切れです。最初からやり直してください。');
+    }
+  })().catch(next);
 });
 
 export { router as registerRouter };
