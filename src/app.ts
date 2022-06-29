@@ -4,12 +4,13 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import session from 'express-session';
 import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
 import { userRouter } from './routes/user';
+import { loginRouter } from './routes/login';
 import { TempUserModel } from './infra/db/TempUserModel';
 import { UserModel } from './infra/db/UserModel';
-
 
 // DBテーブル作成
 TempUserModel.sync();
@@ -27,9 +28,47 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
+declare module 'express-session' {
+  interface SessionData {
+    loggedIn: boolean;
+    userName: string;
+    test: string;
+  }
+}
+
+// TODO: 設定見直し
+app.use(
+  session({
+    name: 'sessionIdddd',
+    secret: 'e55be81b307c1c09',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      path: '/', // default
+      httpOnly: true, // default
+      maxAge: 10 * 1000, // 10sec
+    },
+  })
+);
+
+app.use((req, res, next) => {
+  console.log('app.ts', req.session);
+  next()
+})
+
+
+const loggedInCheck = (req: Request, res:Response, next: NextFunction) => {
+  if (!req.session.loggedIn) {
+    res.redirect(`/login?from=${req.originalUrl}`);
+  }
+
+  next();
+};
+
 app.use('/', indexRouter);
 app.use('/register', registerRouter);
-app.use('/user', userRouter);
+app.use('/user', loggedInCheck, userRouter);
+app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

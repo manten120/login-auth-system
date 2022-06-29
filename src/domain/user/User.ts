@@ -30,4 +30,6 @@ export class User {
     const password = Password.reconstruct(argsObj.hashedPasswordValue);
     return new User(id, name, email, password);
   };
+
+  readonly canLogin = (email: Email, password: Password) => this.email.equals(email) && this.password.equals(password);
 }

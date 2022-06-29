@@ -1,20 +1,9 @@
 import express from 'express';
-const router = express.Router();
-
-// TODO:移動する
-import { TempUserRepository } from '../infra/repository/TempUserRepository';
-import { UserRepository } from '../infra/repository/UserRepository';
-import { CreateTempUserUseCase } from '../useCase/CreateTempUserUseCase';
-import { mailer } from '../infra/Mailer';
 import { Email } from '../domain/user/Email';
 import { UrlToken } from '../domain/tempUser/UrlToken';
-import { CheckUrlTokenUseCase } from '../useCase/CheckUrlTokenUseCase';
-import { CreateUserUseCase } from '../useCase/CreateUserUseCase';
-const tempUserRepository = new TempUserRepository();
-const userRepository = new UserRepository();
-const createTempUserUseCase = new CreateTempUserUseCase(userRepository, tempUserRepository, mailer);
-const checkUrlTokenUseCase = new CheckUrlTokenUseCase(tempUserRepository);
-const createUserUseCase = new CreateUserUseCase(tempUserRepository, userRepository);
+import { createTempUserUseCase, checkUrlTokenUseCase, createUserUseCase } from '../useCase/init';
+
+const router = express.Router();
 
 // ユーザーアカウント作成を開始する
 router.get('/', (req, res, next) => {
@@ -51,16 +40,17 @@ router.post('/', async (req, res, next) => {
     // 登録手続きメールの送信に失敗した時
     // 明らかにEメールアドレスではない文字列がPOSTされたとき
     if (result.reason === 'sendingEmailFailed') {
-      return res.redirect('/register?message=メールの送信に失敗しました。申し訳ありません。しばらく時間をおいてから試してください。');
+      return res.redirect(
+        '/register?message=メールの送信に失敗しました。申し訳ありません。しばらく時間をおいてから試してください。'
+      );
     }
 
-    return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+    // TODO: この辺の処理
   })().catch((e) => {
-    console.log('env', req.app.get('env'))
     if (req.app.get('env') === 'production') {
-      res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+      res.redirect('/register?message=申し訳ありません。しばらく時間をおいてから試してください。');
     }
-    next(e)
+    next(e);
   });
 });
 
@@ -71,12 +61,17 @@ router.get('/emailed', (_req, res, _next) => {
   });
 });
 
+// 登録手続きメールからアクセスしたとき
 router.get('/details', async (req, res, next) => {
   (async () => {
     const urlToken = req.query.t;
 
+    // TODO: 削除
+    if (typeof urlToken !== 'string') {
+      console.log('not string');
+    }
+
     // urlTokenがundefinedまたはurlTokenのフォーマットがuuidでないとき
-    //
     if (typeof urlToken !== 'string' || !UrlToken.isUUID(urlToken)) {
       return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
     }
@@ -86,7 +81,11 @@ router.get('/details', async (req, res, next) => {
 
     // 有効ならばフォームを表示
     if (result.ok) {
-      return res.render('registerForm', { title: 'ユーザーアカウントを作成する画面', urlToken });
+      return res.render('registerForm', {
+        title: 'ユーザーアカウントを作成する画面2',
+        urlToken,
+        message: req.query.message,
+      });
     }
 
     // 無効(期限切れ)ならばその旨とEメールアドレス登録フォームを表示する
@@ -100,8 +99,14 @@ router.get('/details', async (req, res, next) => {
       return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
     }
 
-    return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
-  })().catch(next);
+    // TODO: この辺の処理
+    // return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+  })().catch((e) => {
+    if (req.app.get('env') === 'production') {
+      res.redirect('/register?message=申し訳ありません。しばらく時間をおいてから試してください。');
+    }
+    next(e);
+  });
 });
 
 const removeSlash = (urlToken: any) => {
@@ -123,15 +128,13 @@ router.post('/details', async (req, res, next) => {
     // urlTokenの末尾になぜか/がついてしまうので削除する
     const urlToken = removeSlash(req.body.urlToken);
 
-    console.log('typeof...', typeof name);
-    console.log({ name, password1, password2 });
-
     if (
       typeof name !== 'string' &&
       typeof password1 !== 'string' &&
       typeof password2 !== 'string' &&
       typeof urlToken !== 'string'
     ) {
+      // TODO: この辺の処理
       // エラー
     }
 
@@ -143,6 +146,9 @@ router.post('/details', async (req, res, next) => {
     });
 
     if (result.ok) {
+      req.session.loggedIn = true;
+      req.session.userName = name;
+      res.redirect('/user'); // res.send()だとセッションが保存されない
       return;
     }
 
@@ -150,7 +156,16 @@ router.post('/details', async (req, res, next) => {
     if (result.reason === 'expired') {
       return res.redirect('/register?message=期限切れです。最初からやり直してください。');
     }
-  })().catch(next);
+
+    // TODO: この辺の処理
+  })().catch((e) => {
+    if (req.app.get('env') === 'production') {
+      res.redirect(
+        `/register/details?message=申し訳ありません。しばらく時間をおいてから試してください。&t=${req.body.urlToken}`
+      );
+    }
+    next(e);
+  });
 });
 
 export { router as registerRouter };

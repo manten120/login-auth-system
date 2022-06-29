@@ -28,4 +28,6 @@ export class Email {
     new Email(emailHashedValue, emailEncryptedValue);
 
   readonly plainValue = () => decrypt(this.encryptedValue); // 復号化
+  
+  readonly equals = (email: Email) => this.hashedValue === email.hashedValue;
 }

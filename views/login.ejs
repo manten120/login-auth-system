@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ログイン</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h1>ログイン</h1>
+
+    <form method="post" action="/login">
+      <div>
+        <label for="email">Eメールアドレス：</label>
+        <input type="email" id="email" name="email" required/>
+      </div>
+      <div>
+        <label for="password">パスワード：</label>
+        <input type="password" id="password1" name="password" required />
+        <button type="button" id="passwordButton1" onclick="toggleVisible(1)">表示</button>
+      </div>
+        <button type="submit">決定</button>
+      </div>
+    </form>
+    <div><%= message %></div>
+  </body>
+
+  <script>
+    // パスワード表示・非表示を切り替える
+    const toggleVisible = (number) => {
+      const passwordInput = document.getElementById(`password${number}`);
+      const passwordButton = document.getElementById(`passwordButton${number}`);
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordButton.textContent = '非表示';
+        return;
+      }
+      passwordInput.type = 'password';
+      passwordButton.textContent = '表示';
+    }
+  </script>
+</html>
