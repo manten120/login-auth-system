@@ -28,6 +28,7 @@
         <button type="submit" onclick="twoPasswordsMatch()">決定</button>
       </div>
     </form>
+    <div><%= message %></div>
   </body>
 
   <script>
@@ -51,7 +52,12 @@
       const password2 = document.getElementById('password2');
       if (password1.value !== password2.value) {
         password2.setCustomValidity("入力値が一致しません。");
+        password1.addEventListener('input', () => {
+          password1.setCustomValidity("");
+          password2.setCustomValidity("");
+        })
         password2.addEventListener('input', () => {
+          password1.setCustomValidity("");
           password2.setCustomValidity("");
         })
       }
