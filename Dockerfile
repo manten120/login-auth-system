@@ -4,4 +4,4 @@ ENV LANG=ja_JP.UTF-8
 ENV TZ=Asia/Tokyo
 WORKDIR /app
 
-CMD bash -c "yarn install && yarn dev"
+CMD bash -c "sleep 10; yarn install && yarn dev"
