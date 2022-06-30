@@ -7,7 +7,7 @@ export class Password {
     if (this.canSave) {
       return this._hashedValue;
     }
-    throw new Error('ユーザー登録時に生成したPasswordインスタンスからのみ値を取り出すことができます');
+    throw new Error('ユーザー登録時またはパスワード変更時に生成したPasswordインスタンスからのみ値を取り出すことができます');
   }
 
   static readonly create = (passwordPlainValue1: string, passwordPlainValue2: string) => {
