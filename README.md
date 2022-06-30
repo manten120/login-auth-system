@@ -6,7 +6,7 @@
 
 - [src/adapter/encrypt.ts] 暗号化の仕組みやアルゴリズム
 
-- [src/session.ts] express-sessionの設定項目。セッションの有効期限の適切な値。
+- [src/session.ts] express-sessionの設定項目。
 
 - 
 
@@ -22,4 +22,13 @@ docker-compose -f prod.docker-compose.yml up -d
 
 ```
 docker-compose up -d
+```
+
+ブラウザで http://localhost:8000 にアクセス
+
+
+起動に失敗した場合
+
+```
+docker restart node16
 ```
