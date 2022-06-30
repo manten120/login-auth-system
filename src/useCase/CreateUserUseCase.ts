@@ -27,8 +27,14 @@ export class CreateUserUseCase {
     const urlToken = UrlToken.reconstruct(argsObj.urlTokenValue);
     const tempUser = await this.tempUserRepository.findByUrlToken(urlToken);
 
-    // 仮登録ユーザーが存在しないまたは期限切れのとき
-    if (!tempUser || tempUser.isExpired()) {
+    // 仮登録ユーザーが存在しないとき
+    if (!tempUser) {
+      return { ok: false, reason: 'expired' };
+    }
+
+    // 期限切れのとき
+    if (tempUser.isExpired()) {
+      this.tempUserRepository.delete(tempUser);
       return { ok: false, reason: 'expired' };
     }
 
@@ -38,8 +44,7 @@ export class CreateUserUseCase {
     const user = User.create(userName, tempUser.email, password);
     await this.userRepository.insert(user);
 
-    // TODO: awaitする必要ある?
-    await this.tempUserRepository.delete(tempUser);
+    this.tempUserRepository.delete(tempUser);
 
     return { ok: true };
   };
