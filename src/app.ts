@@ -60,9 +60,8 @@ app.use((req, res, next) => {
 
 const loggedInCheck = (req: Request, res: Response, next: NextFunction) => {
   if (!req.session.loggedIn) {
-    res.redirect(`/login?from=${req.originalUrl}`);
+    return res.redirect(`/login?from=${req.originalUrl}`);
   }
-
   next();
 };
 
