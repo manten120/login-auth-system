@@ -1,6 +1,7 @@
 import express from 'express';
 import { loginUseCase } from '../useCase/init';
 import { csrfProtection } from '../adapter/csrfProtection';
+import { Email } from '../domain/user/Email';
 
 const router = express.Router();
 
@@ -22,11 +23,10 @@ router.post('/', csrfProtection, (req, res, next) => {
   (async () => {
     const { email, password } = req.body;
 
-    if (typeof email !== 'string' && typeof password !== 'string') {
+    if (typeof email !== 'string' || typeof password !== 'string') {
       return res.redirect('/login?message=ログインに失敗しました');
     }
 
-    // TODO: プレゼンテーション層でのバリデーションどうする？
     // if (!Email.isValid(email) && !Password.validation(password)) {
     //   return res.redirect('/login?message=ログインに失敗しました');
     // }
@@ -38,12 +38,29 @@ router.post('/', csrfProtection, (req, res, next) => {
       req.session.userName = result.userName;
 
       const loginFrom = req.cookies.loginFrom;
+
+      // 未ログイン状態でログイン後のページにアクセスし、リダイレクトされてログイン画面に来ていたとき
       if (loginFrom && loginFrom.startsWith('/')) {
         res.clearCookie('loginFrom');
-        return res.redirect(loginFrom);
+
+        return req.session.save((err) => {
+          if (err) {
+            req.session.destroy(() => {
+              throw new Error(err);
+            });
+          }
+          res.redirect(loginFrom);
+        });
       }
 
-      return res.redirect('/');
+      return req.session.save((err) => {
+        if (err) {
+          req.session.destroy(() => {
+            throw new Error(err);
+          });
+        }
+        res.redirect('/');
+      });
     }
 
     return res.redirect('/login?message=ログインに失敗しました');
