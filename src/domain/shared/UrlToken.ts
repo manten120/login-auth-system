@@ -1,5 +1,7 @@
 import crypto from 'crypto';
 
+// 登録手続きメールまたはパスワード変更メールに記載のURLの末尾に付き、
+// ユーザーを一意に識別するためのクエリストリング
 export class UrlToken {
   private constructor(public value: string) {
     if (!UrlToken.isUUID(value)) {

@@ -1,6 +1,6 @@
 import express from 'express';
 import { Email } from '../domain/user/Email';
-import { UrlToken } from '../domain/tempUser/UrlToken';
+import { UrlToken } from '../domain/shared/UrlToken';
 import { createTempUserUseCase, checkUrlTokenUseCase, createUserUseCase } from '../useCase/init';
 import { csrfProtection } from '../adapter/csrfProtection';
 

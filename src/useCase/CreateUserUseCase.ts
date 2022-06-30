@@ -1,5 +1,5 @@
 import { ITempUserRepository } from '../domain/tempUser/ITempUserRepository';
-import { UrlToken } from '../domain/tempUser/UrlToken';
+import { UrlToken } from '../domain/shared/UrlToken';
 import { IUserRepository } from '../domain/user/IUserRepository';
 import { Password } from '../domain/user/Password';
 import { User } from '../domain/user/User';

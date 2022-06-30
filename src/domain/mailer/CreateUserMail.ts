@@ -1,7 +1,7 @@
 import { port } from '../../bin/www';
 import { IMail } from './IMail';
 import { Email } from '../user/Email';
-import { UrlToken } from '../tempUser/UrlToken';
+import { UrlToken } from '../shared/UrlToken';
 
 // ユーザーアカウント登録開始時に送るメール
 export class CreateUserMail implements IMail {

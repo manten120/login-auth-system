@@ -1,4 +1,4 @@
-import { UrlToken } from '../domain/tempUser/UrlToken';
+import { UrlToken } from '../domain/shared/UrlToken';
 import { IUserRepository } from '../domain/user/IUserRepository';
 import { ForgottenUserRepository } from '../infra/repository/ForgottenUserRepository';
 

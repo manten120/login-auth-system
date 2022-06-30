@@ -1,4 +1,4 @@
-import { UrlToken } from '../tempUser/UrlToken';
+import { UrlToken } from '../shared/UrlToken';
 import { User } from '../user/User';
 import { UserId } from '../user/UserId';
 import { Email } from '../user/Email';

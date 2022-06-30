@@ -1,3 +1,5 @@
+// 登録手続きメールの送信を繰り返した回数
+// またはパスワード変更メールの送信を繰り返した回数
 export class RepeatedTimes {
   static MIN_TIMES = 1;
   

@@ -2,7 +2,7 @@ import { Email } from '../../domain/user/Email';
 import { ITempUserRepository } from '../../domain/tempUser/ITempUserRepository';
 import { TempUser } from '../../domain/tempUser/TempUser';
 import { TempUserModel } from '../db/TempUserModel';
-import { UrlToken } from '../../domain/tempUser/UrlToken';
+import { UrlToken } from '../../domain/shared/UrlToken';
 
 export class TempUserRepository implements ITempUserRepository {
   insert = async (tempUser: TempUser) => {

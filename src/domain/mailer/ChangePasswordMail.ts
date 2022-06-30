@@ -1,6 +1,6 @@
 import { port } from '../../bin/www';
 import { Email } from '../user/Email';
-import { UrlToken } from '../tempUser/UrlToken';
+import { UrlToken } from '../shared/UrlToken';
 
 // パスワード変更時に送るメール
 export class ChangePasswordMail {

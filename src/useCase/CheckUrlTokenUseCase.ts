@@ -1,5 +1,5 @@
 import { ITempUserRepository } from '../domain/tempUser/ITempUserRepository';
-import { UrlToken } from '../domain/tempUser/UrlToken';
+import { UrlToken } from '../domain/shared/UrlToken';
 
 export class CheckUrlTokenUseCase {
   constructor(private readonly tempUserRepository: ITempUserRepository) {}

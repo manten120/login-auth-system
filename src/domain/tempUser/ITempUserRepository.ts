@@ -1,6 +1,6 @@
 import { Email } from '../user/Email';
 import { TempUser } from './TempUser';
-import { UrlToken } from '../tempUser/UrlToken';
+import { UrlToken } from '../shared/UrlToken';
 
 // 仮登録ユーザーのリポジトリ
 export interface ITempUserRepository {

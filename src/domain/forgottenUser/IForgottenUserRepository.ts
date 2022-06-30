@@ -1,6 +1,6 @@
 import { ForgottenUser } from './ForgottenUser';
 import { Email } from '../user/Email';
-import { UrlToken } from '../tempUser/UrlToken';
+import { UrlToken } from '../shared/UrlToken';
 
 // パスワード変更中のユーザーのリポジトリ
 export interface IForgottenUserRepository {

@@ -1,7 +1,7 @@
 import { Email } from '../user/Email';
-import { UrlToken } from './UrlToken';
-import { ExpiredAt } from './ExpiredAt';
-import { RepeatedTimes } from './RepeatedTimes';
+import { UrlToken } from '../shared/UrlToken';
+import { ExpiredAt } from '../shared/ExpiredAt';
+import { RepeatedTimes } from '../shared/RepeatedTimes';
 
 // 仮登録ユーザー
 export class TempUser {
