@@ -105,7 +105,7 @@ router.get('/details', csrfProtection, async (req, res, next) => {
 
     // 無効ならばその旨とEメールアドレス登録フォームを表示する
     // urlTokenと紐づく仮登録ユーザーが存在しないとき
-    if (result.reason === 'notExist') {
+    if (result.reason === 'tempUserNotExist') {
       return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
     }
 
