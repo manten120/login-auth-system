@@ -1,4 +1,3 @@
-import { port } from '../../bin/www';
 import { IMail } from './IMail';
 import { Email } from '../user/Email';
 import { UrlToken } from '../shared/UrlToken';
@@ -20,7 +19,7 @@ export class CreateUserMail implements IMail {
   constructor(email: Email, urlToken: UrlToken) {
     // TODO: URLを変更
     this.text = `30分以内に下記のURLからご登録下さい。
-      \n\n http://localhost:${port}/register/details?t=${urlToken.value}`;
+      \n\n http://localhost:8000/register/details?t=${urlToken.value}`;
 
     this.to = email.plainValue();
   }

@@ -7,7 +7,7 @@ services:
       dockerfile: prod.Dockerfile
     tty: true
     ports:
-      - 3000:3000
+      - 8000:3000
     volumes:
       - .:/app
       - /app/node_modules

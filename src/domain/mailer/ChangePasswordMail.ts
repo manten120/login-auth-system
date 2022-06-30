@@ -1,4 +1,3 @@
-import { port } from '../../bin/www';
 import { IMail } from './IMail';
 import { Email } from '../user/Email';
 import { UrlToken } from '../shared/UrlToken';
@@ -20,7 +19,7 @@ export class ChangePasswordMail implements IMail {
   constructor(email: Email, urlToken: UrlToken) {
     // TODO: URLを変更
     this.text = `30分以内に下記のURLからパスワード変更の手続きを完了してください。
-        \n\n http://localhost:${port}/forget-password/change?t=${urlToken.value}`;
+        \n\n http://localhost:8000/forget-password/change?t=${urlToken.value}`;
     this.to = email.plainValue();
   }
 }
