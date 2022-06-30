@@ -21,8 +21,9 @@ export const sessionHandler = session({
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
+  rolling: true, // アクセス毎にmaxAgeを更新
   cookie: {
-    maxAge: 10 * 60 * 1000, // 10min
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7日
   },
 });
 
