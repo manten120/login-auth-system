@@ -5,8 +5,8 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
+    <%- include('./header'); %>
     <h1><%= title %></h1>
-
     <form method="post" action="<%= postTo %>">
       <input hidden type="text" id="urlToken" name="urlToken" value=<%= urlToken %>/>
       <% if (type === "registerUser") { %>

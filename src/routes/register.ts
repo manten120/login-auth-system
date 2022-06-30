@@ -8,7 +8,13 @@ const router = express.Router();
 
 // ユーザーアカウント作成を開始する
 router.get('/', (req, res, next) => {
-  res.render('emailForm', { title: 'ユーザーアカウントを作成する画面1', message: req.query.message, type: 'registerUser', });
+  res.render('emailForm', {
+    title: 'ユーザーアカウントを作成する画面1',
+    message: req.query.message,
+    type: 'registerUser',
+    loggedIn: req.session.loggedIn,
+    userName: req.session.userName,
+  });
 });
 
 router.post('/', async (req, res, next) => {
@@ -55,10 +61,12 @@ router.post('/', async (req, res, next) => {
   });
 });
 
-router.get('/emailed', (_req, res, _next) => {
+router.get('/emailed', (req, res, _next) => {
   res.render('message', {
     title: 'メールを送信しました',
     message: 'メールに記載した手順で登録手続きをすすめてください',
+    loggedIn: req.session.loggedIn,
+    userName: req.session.userName,
   });
 });
 
@@ -83,6 +91,8 @@ router.get('/details', async (req, res, next) => {
         urlToken,
         postTo: '/register/details',
         message: req.query.message,
+        loggedIn: req.session.loggedIn,
+        userName: req.session.userName,
       });
     }
 

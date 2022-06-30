@@ -18,6 +18,8 @@ router.get('/', (req, res, _next) => {
     message: req.query.message
       ? req.query.message
       : 'メールアドレスを入力してください。パスワード変更のためのメールをお送りします。',
+    loggedIn: req.session.loggedIn,
+    userName: req.session.userName,
   });
 });
 
@@ -58,11 +60,13 @@ router.post('/', (req, res, next) => {
 });
 
 // パスワード変更メールを送信した旨を表示する
-router.get('/emailed', (_req, res, _next) => {
+router.get('/emailed', (req, res, _next) => {
   res.render('message', {
     title: 'メールを送信しました',
     message: 'メールに記載した手順でパスワードを変更してください',
     link: '/forget-password',
+    loggedIn: req.session.loggedIn,
+    userName: req.session.userName,
   });
 });
 
@@ -86,6 +90,8 @@ router.get('/change', (req, res, next) => {
         urlToken,
         postTo: '/forget-password/change',
         message: req.query.message,
+        loggedIn: req.session.loggedIn,
+        userName: req.session.userName,
       });
     }
 
@@ -128,7 +134,9 @@ router.post('/change', (req, res, next) => {
     }
 
     if (result.reason === 'userNotExist') {
-      return res.redirect('/register?message=アカウントが存在しません。新規作成する場合はメールアドレスを登録してください')
+      return res.redirect(
+        '/register?message=アカウントが存在しません。新規作成する場合はメールアドレスを登録してください'
+      );
     }
 
     return res.redirect('/forget-password?message=期限切れです。最初からやり直してください。');

@@ -9,7 +9,7 @@ router.get('/', (req, res, _next) => {
     res.cookie('loginFrom', from, { expires: new Date(Date.now() + 600000) });
   }
 
-  res.render('login', { message: req.query.message });
+  res.render('login', { message: req.query.message, loggedIn: req.session.loggedIn, userName: req.session.userName });
 });
 
 router.post('/', (req, res, next) => {
