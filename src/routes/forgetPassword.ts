@@ -93,7 +93,6 @@ router.get('/change', (req, res, next) => {
       return res.redirect('/forget-email?message=期限切れです。最初からやり直してください。');
     }
 
-    // result.reason === 'notExist'
     return res.redirect('/forget-email?message=無効なURLです。最初からやり直してください。');
   })().catch((e) => {
     if (req.app.get('env') === 'production') {
@@ -132,7 +131,7 @@ router.post('/change', (req, res, next) => {
       return res.redirect('/register?message=アカウントが存在しません。新規作成する場合はメールアドレスを登録してください')
     }
 
-    return res.redirect('/forget-password?note=期限切れです。最初からやり直してください。');
+    return res.redirect('/forget-password?message=期限切れです。最初からやり直してください。');
   })().catch((e) => {
     if (req.app.get('env') === 'production') {
       res.redirect('/forget-password?message=申し訳ありません。しばらく時間をおいてから試してください。');

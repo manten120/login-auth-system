@@ -2,7 +2,7 @@
 export class ExpiredAt {
   private constructor(public readonly value: string) {}
 
-  private static readonly REMAINING_MINUTES = 30;
+  private static readonly REMAINING_MINUTES = 1;
 
   static readonly create = () => {
     const currentTimeInMillisecondFormat = Date.now();
