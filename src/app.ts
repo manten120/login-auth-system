@@ -1,4 +1,3 @@
-import 'dotenv/config'; // expressより前にimportすること
 import createError from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
