@@ -1,5 +1,4 @@
 import express from 'express';
-import { removeSlash } from '../adapter/removeSlash';
 import { csrfProtection } from '../adapter/csrfProtection';
 import { UrlToken } from '../domain/shared/UrlToken';
 import { Email } from '../domain/user/Email';
@@ -113,9 +112,8 @@ router.get('/change', csrfProtection, (req, res, next) => {
 // 新しいパスワードを受け取る
 router.post('/change', csrfProtection, (req, res, next) => {
   (async () => {
-    const { password1, password2 } = req.body;
-    const urlToken = removeSlash(req.body.urlToken);
-
+    const { urlToken, password1, password2 } = req.body;
+    
     if (typeof urlToken !== 'string' || typeof password1 !== 'string' || typeof password2 !== 'string') {
       return;
     }

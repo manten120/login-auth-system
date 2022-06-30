@@ -2,7 +2,6 @@ import express from 'express';
 import { Email } from '../domain/user/Email';
 import { UrlToken } from '../domain/tempUser/UrlToken';
 import { createTempUserUseCase, checkUrlTokenUseCase, createUserUseCase } from '../useCase/init';
-import { removeSlash } from '../adapter/removeSlash';
 import { csrfProtection } from '../adapter/csrfProtection';
 
 const router = express.Router();
@@ -124,10 +123,7 @@ router.get('/details', csrfProtection, async (req, res, next) => {
 
 router.post('/details', csrfProtection, async (req, res, next) => {
   (async () => {
-    const { name, password1, password2 } = req.body;
-
-    // urlTokenの末尾になぜか/がついてしまうので削除する
-    const urlToken = removeSlash(req.body.urlToken);
+    const { urlToken, name, password1, password2 } = req.body;
 
     if (
       typeof name !== 'string' &&

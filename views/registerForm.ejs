@@ -9,7 +9,7 @@
     <h1><%= title %></h1>
     <form method="post" action="<%= postTo %>">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
-      <input hidden type="text" id="urlToken" name="urlToken" value=<%= urlToken %>/>
+      <input hidden type="text" id="urlToken" name="urlToken" value="<%= urlToken %>"/>
       <% if (type === "registerUser") { %>
         <div>
           <label for="name">ユーザー名：</label>
