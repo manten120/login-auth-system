@@ -1,15 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, InferAttributes } from 'sequelize';
 import { sequelize } from '../sequelize-loader';
 
-export type TempUserModelAttributes = {
-  hashed_email: string;
-  encrypted_email: string;
-  url_token: string;
-  expired_at: string;
-  repeated_times: number;
-};
-
-export class TempUserModel extends Model<TempUserModelAttributes> {
+export class TempUserModel extends Model<InferAttributes<TempUserModel>> {
   declare hashed_email: string;
   declare encrypted_email: string;
   declare url_token: string;

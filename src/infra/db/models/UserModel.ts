@@ -1,15 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, InferAttributes } from 'sequelize';
 import { sequelize } from '../sequelize-loader';
 
-export type UserModelAttributes = {
-  id: string;
-  name: string;
-  hashed_email: string;
-  encrypted_email: string;
-  password: string;
-};
-
-export class UserModel extends Model<UserModelAttributes> {
+export class UserModel extends Model<InferAttributes<UserModel>> {
   declare id: string;
   declare name: string;
   declare hashed_email: string;
