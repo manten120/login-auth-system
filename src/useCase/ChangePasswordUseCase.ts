@@ -28,6 +28,7 @@ export class ChangePasswordUseCase {
     }
 
     if (forgottenUser.isExpired()) {
+      this.forgottenUserRepository.delete(forgottenUser);
       return { ok: false, reason: 'expired' };
     }
 
@@ -40,6 +41,7 @@ export class ChangePasswordUseCase {
     user.changePassword(argsObj.passwordPlainValue1, argsObj.passwordPlainValue2);
 
     await this.userRepository.updatePassword(user);
+    this.forgottenUserRepository.delete(forgottenUser);
 
     return { ok: true };
   };
