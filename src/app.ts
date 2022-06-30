@@ -6,31 +6,22 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import session from 'express-session';
 import helmet from 'helmet';
-
 import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
 import { userRouter } from './routes/user';
 import { loginRouter } from './routes/login';
 import { logoutRouter } from './routes/logout';
 import { forgetPasswordRouter } from './routes/forgetPassword';
+import { initDB } from './infra/db/initDB';
 
-import { UserModel } from './infra/db/UserModel';
-import { ForgottenUserModel } from './infra/db/ForgottenUserModel';
-import { sequelize } from './infra/db/sequelize-loader';
-
-// DBテーブル作成
-ForgottenUserModel.belongsTo(UserModel, {
-  foreignKey: { name: 'user_id', allowNull: false },
-  targetKey: 'id',
-});
-sequelize.sync();
+initDB();
 
 const app = express();
 
 app.use(helmet());
 
 // view engine setup
-app.set('views', path.join(__dirname, '../views'))
+app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));

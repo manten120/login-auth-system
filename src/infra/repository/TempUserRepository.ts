@@ -1,7 +1,7 @@
 import { Email } from '../../domain/user/Email';
 import { ITempUserRepository } from '../../domain/tempUser/ITempUserRepository';
 import { TempUser } from '../../domain/tempUser/TempUser';
-import { TempUserModel } from '../db/TempUserModel';
+import { TempUserModel } from '../db/models/TempUserModel';
 import { UrlToken } from '../../domain/shared/UrlToken';
 
 export class TempUserRepository implements ITempUserRepository {
@@ -62,6 +62,6 @@ export class TempUserRepository implements ITempUserRepository {
   };
 
   delete = async (tempUser: TempUser) => {
-    TempUserModel.destroy({where: { hashed_email: tempUser.email.hashedValue }});
-  }
+    TempUserModel.destroy({ where: { hashed_email: tempUser.email.hashedValue } });
+  };
 }

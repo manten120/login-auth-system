@@ -22,8 +22,6 @@ router.post('/', csrfProtection, async (req, res, next) => {
   (async () => {
     const email = req.body.email;
 
-    console.log( req.body )
-
     // 明らかにEメールアドレスではない値がPOSTされたとき
     if (typeof email !== 'string' || !Email.isValid(email)) {
       return res.redirect('/register');

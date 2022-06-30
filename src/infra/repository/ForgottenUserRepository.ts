@@ -1,4 +1,4 @@
-import { ForgottenUserModel } from '../db/ForgottenUserModel';
+import { ForgottenUserModel } from '../db/models/ForgottenUserModel';
 import { IForgottenUserRepository } from '../../domain/forgottenUser/IForgottenUserRepository';
 import { ForgottenUser } from '../../domain/forgottenUser/ForgottenUser';
 import { Email } from '../../domain/user/Email';

@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from './sequelize-loader';
+import { sequelize } from '../sequelize-loader';
 
 export type TempUserModelAttributes = {
   hashed_email: string;

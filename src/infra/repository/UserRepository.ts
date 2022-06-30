@@ -1,7 +1,7 @@
 import { IUserRepository } from '../../domain/user/IUserRepository';
 import { User } from '../../domain/user/User';
 import { Email } from '../../domain/user/Email';
-import { UserModel } from '../db/UserModel';
+import { UserModel } from '../db/models/UserModel';
 
 export class UserRepository implements IUserRepository {
   insert = async (user: User) => {

@@ -1,5 +1,5 @@
 import { DataTypes, Model, ForeignKey, InferAttributes } from 'sequelize';
-import { sequelize } from './sequelize-loader';
+import { sequelize } from '../sequelize-loader';
 import { UserModel } from './UserModel';
 
 export class ForgottenUserModel extends Model<InferAttributes<ForgottenUserModel>> {
