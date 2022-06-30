@@ -12,7 +12,6 @@ import { userRouter } from './routes/user';
 import { loginRouter } from './routes/login';
 import { forgetPasswordRouter } from './routes/forgetPassword';
 
-import { TempUserModel } from './infra/db/TempUserModel';
 import { UserModel } from './infra/db/UserModel';
 import { ForgottenUserModel } from './infra/db/ForgottenUserModel';
 import { sequelize } from './infra/db/sequelize-loader';
@@ -48,7 +47,7 @@ declare module 'express-session' {
 app.use(
   session({
     name: 'sessionIdddd',
-    secret: 'e55be81b307c1c09',
+    secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
     cookie: {
