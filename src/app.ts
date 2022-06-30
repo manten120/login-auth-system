@@ -13,6 +13,8 @@ import { logoutRouter } from './routes/logout';
 import { forgetPasswordRouter } from './routes/forgetPassword';
 import { initDB } from './infra/db/initDB';
 
+import { sessionHandler } from './session';
+
 initDB();
 
 const app = express();
@@ -29,29 +31,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
-declare module 'express-session' {
-  interface SessionData {
-    loggedIn: boolean;
-    userName: string;
-    test: string;
-  }
-}
+app.use(sessionHandler);
 
-// TODO: 設定見直し
-app.use(
-  session({
-    name: 'BMDv21zlrGbYWb',
-    secret: process.env.SESSION_SECRET!,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      path: '/', // default
-      httpOnly: true, // default
-      maxAge: 10 * 1000, // 10sec
-    },
-  })
-);
-
+// TODO: 削除
 app.use((req, res, next) => {
   console.log('app.ts', req.session);
   next();
