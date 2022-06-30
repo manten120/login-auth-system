@@ -11,6 +11,7 @@ import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
 import { userRouter } from './routes/user';
 import { loginRouter } from './routes/login';
+import { logoutRouter } from './routes/logout';
 import { forgetPasswordRouter } from './routes/forgetPassword';
 
 import { UserModel } from './infra/db/UserModel';
@@ -78,6 +79,7 @@ app.use('/', indexRouter);
 app.use('/register', registerRouter);
 app.use('/user', loggedInCheck, userRouter);
 app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
 app.use('/forget-password', forgetPasswordRouter);
 
 // catch 404 and forward to error handler
