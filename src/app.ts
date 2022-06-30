@@ -5,6 +5,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import session from 'express-session';
+import helmet from 'helmet';
 
 import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
@@ -24,6 +25,8 @@ ForgottenUserModel.belongsTo(UserModel, {
 sequelize.sync();
 
 const app = express();
+
+app.use(helmet());
 
 // view engine setup
 app.set('views', path.join(__dirname, '../views'))
