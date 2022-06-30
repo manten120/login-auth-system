@@ -5,21 +5,29 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import session from 'express-session';
+
 import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
 import { userRouter } from './routes/user';
 import { loginRouter } from './routes/login';
+import { forgetPasswordRouter } from './routes/forgetPassword';
+
 import { TempUserModel } from './infra/db/TempUserModel';
 import { UserModel } from './infra/db/UserModel';
+import { ForgottenUserModel } from './infra/db/ForgottenUserModel';
+import { sequelize } from './infra/db/sequelize-loader';
 
 // DBテーブル作成
-TempUserModel.sync();
-UserModel.sync();
+ForgottenUserModel.belongsTo(UserModel, {
+  foreignKey: { name: 'user_id', allowNull: false },
+  targetKey: 'id',
+});
+sequelize.sync();
 
 const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(__dirname, '../views'))
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
@@ -53,11 +61,10 @@ app.use(
 
 app.use((req, res, next) => {
   console.log('app.ts', req.session);
-  next()
-})
+  next();
+});
 
-
-const loggedInCheck = (req: Request, res:Response, next: NextFunction) => {
+const loggedInCheck = (req: Request, res: Response, next: NextFunction) => {
   if (!req.session.loggedIn) {
     res.redirect(`/login?from=${req.originalUrl}`);
   }
@@ -69,6 +76,7 @@ app.use('/', indexRouter);
 app.use('/register', registerRouter);
 app.use('/user', loggedInCheck, userRouter);
 app.use('/login', loginRouter);
+app.use('/forget-password', forgetPasswordRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

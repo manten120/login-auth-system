@@ -37,4 +37,6 @@ export class Password {
   static readonly reconstruct = (passwordHashedValue: string) => new Password(passwordHashedValue, false);
 
   readonly equals = (password: Password) => this._hashedValue === password._hashedValue;
+
+  readonly change = (passwordPlainValue1: string, passwordPlainValue2: string) => Password.create(passwordPlainValue1, passwordPlainValue2);
 }

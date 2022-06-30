@@ -1,6 +1,4 @@
 import express from 'express';
-import { Email } from '../domain/user/Email';
-import { Password } from '../domain/user/Password';
 import { loginUseCase } from '../useCase/init';
 
 const router = express.Router();

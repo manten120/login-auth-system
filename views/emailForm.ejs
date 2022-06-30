@@ -8,12 +8,21 @@
     <h1><%= title %></h1>
     <p><%= message %></p>
 
-    <form method="post" action="/register" onsubmit="disableSubmit()">
+    <% if(type === 'forgetPassword') { %>
+      <form method="post" action="/forget-password" onsubmit="disableSubmit()">
+    <% } else { %>
+      <form method="post" action="/register" onsubmit="disableSubmit()">
+    <% } %>
       <div>
         <label for="email">Eメールアドレス：</label>
         <input type="email" id="email" name="email" required/>
       </div>
-        <input id="submit" type="submit" value="登録する"/>
+          <% if(type === 'forgetPassword') { %>
+            <button id="submit" type="submit">送信する</button>
+          <% } else { %>
+            <button id="submit" type="submit">登録する</button>
+          <% } %>
+        </button>
       </div>
     </form>
   </body>

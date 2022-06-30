@@ -14,10 +14,18 @@ export class UserRepository implements IUserRepository {
     });
   };
 
+  updatePassword = async (user: User) => {
+    await UserModel.update(
+      {
+        password: user.password.hashedValue,
+      },
+      { where: { id: user.id.value } }
+    );
+  };
+
   findByEmail = async (email: Email) => {
     const userData = await UserModel.findOne({ where: { hashed_email: email.hashedValue } });
 
-    console.log({ userData });
     if (!userData) {
       return null;
     }

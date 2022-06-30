@@ -8,7 +8,7 @@ export class User {
     public readonly id: UserId,
     public readonly name: UserName,
     public readonly email: Email,
-    public readonly password: Password
+    public password: Password
   ) {}
 
   static readonly create = (userName: UserName, tempUserEmail: Email, password: Password) => {
@@ -32,4 +32,7 @@ export class User {
   };
 
   readonly canLogin = (email: Email, password: Password) => this.email.equals(email) && this.password.equals(password);
+
+  readonly changePassword = (passwordPlainValue1: string, passwordPlainValue2: string) =>
+    (this.password = this.password.change(passwordPlainValue1, passwordPlainValue2));
 }

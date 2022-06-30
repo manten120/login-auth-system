@@ -2,12 +2,13 @@ import express from 'express';
 import { Email } from '../domain/user/Email';
 import { UrlToken } from '../domain/tempUser/UrlToken';
 import { createTempUserUseCase, checkUrlTokenUseCase, createUserUseCase } from '../useCase/init';
+import { removeSlash } from '../adapter/removeSlash';
 
 const router = express.Router();
 
 // ユーザーアカウント作成を開始する
 router.get('/', (req, res, next) => {
-  res.render('emailForm', { title: 'ユーザーアカウントを作成する画面1', message: req.query.message });
+  res.render('emailForm', { title: 'ユーザーアカウントを作成する画面1', message: req.query.message, type: 'registerUser', });
 });
 
 router.post('/', async (req, res, next) => {
@@ -66,11 +67,6 @@ router.get('/details', async (req, res, next) => {
   (async () => {
     const urlToken = req.query.t;
 
-    // TODO: 削除
-    if (typeof urlToken !== 'string') {
-      console.log('not string');
-    }
-
     // urlTokenがundefinedまたはurlTokenのフォーマットがuuidでないとき
     if (typeof urlToken !== 'string' || !UrlToken.isUUID(urlToken)) {
       return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
@@ -83,7 +79,9 @@ router.get('/details', async (req, res, next) => {
     if (result.ok) {
       return res.render('registerForm', {
         title: 'ユーザーアカウントを作成する画面2',
+        type: 'registerUser',
         urlToken,
+        postTo: '/register/details',
         message: req.query.message,
       });
     }
@@ -109,18 +107,6 @@ router.get('/details', async (req, res, next) => {
   });
 });
 
-const removeSlash = (urlToken: any) => {
-  if (typeof urlToken !== 'string') {
-    return urlToken;
-  }
-  const end = urlToken.slice(-1);
-  if (end === '/') {
-    return urlToken.slice(0, -1);
-  }
-  return urlToken;
-};
-
-//
 router.post('/details', async (req, res, next) => {
   (async () => {
     const { name, password1, password2 } = req.body;

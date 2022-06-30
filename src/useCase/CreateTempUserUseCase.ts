@@ -30,7 +30,7 @@ export class CreateTempUserUseCase {
 
     // メールアドレスがユーザーと重複しているならば仮登録不可
     const user = await this.userRepository.findByEmail(email);
-    console.log('foo', {user})
+
     if (user) {
       return { ok: false, reason: 'userAlreadyRegistered' };
     }

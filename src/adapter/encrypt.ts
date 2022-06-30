@@ -11,7 +11,6 @@ const password = process.env.ENCRYPT_PASSWORD!;
 // console.log(crypto.randomBytes(16).toString('base64'))
 const salt = process.env.ENCRYPT_SALT!;
 
-
 // IV を生成
 const iv = crypto.randomBytes(16);
 
@@ -26,14 +25,9 @@ export const encrypt = (data: string) => {
   let encryptedData = cipher.update(data);
   encryptedData = Buffer.concat([encryptedData, cipher.final()]);
 
-  // const encryptedString = encryptedData.toString('hex');
+  // 暗号化したdataとivを結合した文字列
+  const encryptedDataAndIvString = Buffer.concat([iv, encryptedData]).toString('base64');
 
-  const encryptedDataAndIvString = Buffer.concat([iv, encryptedData]).toString('base64'); // 保存する
-
-  // console.log({ encryptedData2 , encryptedDataBuffer, iv2, ciphertext })
-
-  // return encryptedString;
-  // console.log('heeea', encryptedDataAndIvString)
   return encryptedDataAndIvString;
 };
 
@@ -42,8 +36,6 @@ export const decrypt = (encryptedDataAndIvString: string) => {
   const encryptedDataAndIvBuffer = Buffer.from(encryptedDataAndIvString, 'base64');
   const iv = encryptedDataAndIvBuffer.slice(0, 16);
   const encryptedData = encryptedDataAndIvBuffer.slice(16);
-
-  // const encryptedData = Buffer.from(encryptedString, 'hex');
 
   // 鍵を生成
   const key = crypto.scryptSync(password, salt, 32);
@@ -54,8 +46,6 @@ export const decrypt = (encryptedDataAndIvString: string) => {
   // encryptedData を復号
   let decryptedData = decipher.update(encryptedData);
   decryptedData = Buffer.concat([decryptedData, decipher.final()]);
-
-  // console.log('heare', decryptedData.toString())
 
   return decryptedData.toString();
 };

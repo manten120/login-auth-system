@@ -7,13 +7,16 @@
   <body>
     <h1><%= title %></h1>
 
-    <form method="post" action="/register/details">
+    <form method="post" action="<%= postTo %>">
       <input hidden type="text" id="urlToken" name="urlToken" value=<%= urlToken %>/>
-      <div>
-        <label for="name">ユーザー名：</label>
-        <input type="text" id="name" name="name" required placeholder="30文字まで"/>
-      </div>
-      <div>
+      <% if (type === "registerUser") { %>
+        <div>
+          <label for="name">ユーザー名：</label>
+          <input type="text" id="name" name="name" required placeholder="30文字まで"/>
+        </div>
+        <div>
+      <% } %>
+
         <label for="password1">パスワード：</label>
         <input type="password" id="password1" name="password1" required pattern="[a-zA-Z0-9]{8,64}" placeholder="半角英数で8~64文字"/>
         <button type="button" id="passwordButton1" onclick="toggleVisible(1)">表示</button>

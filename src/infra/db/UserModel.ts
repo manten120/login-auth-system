@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from './sequelize-loader';
+import { sequelize } from './sequelize-loader';
 
 export type UserModelAttributes = {
   id: string;
@@ -30,7 +30,7 @@ UserModel.init(
     hashed_email: {
       type: DataTypes.STRING,
       allowNull: false,
-      primaryKey: true,
+      // primaryKey: true,
     },
     encrypted_email: {
       type: DataTypes.STRING,
