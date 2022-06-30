@@ -1,8 +1,8 @@
 import express from 'express';
 import { removeSlash } from '../adapter/removeSlash';
+import { csrfProtection } from '../adapter/csrfProtection';
 import { UrlToken } from '../domain/shared/UrlToken';
 import { Email } from '../domain/user/Email';
-import { Password } from '../domain/user/Password';
 import { sendEmailToChangePasswordUseCase } from '../useCase/init';
 import { checkUrlTokenToChangePasswordUseCase } from '../useCase/init';
 import { changePasswordUseCase } from '../useCase/init';
@@ -10,7 +10,7 @@ import { changePasswordUseCase } from '../useCase/init';
 const router = express.Router();
 
 // パスワード変更開始画面 Eメールアドレスを入力するフォームを表示する
-router.get('/', (req, res, _next) => {
+router.get('/', csrfProtection, (req, res, _next) => {
   res.render('emailForm', {
     type: 'forgetPassword',
     note: req.query.note,
@@ -20,11 +20,12 @@ router.get('/', (req, res, _next) => {
       : 'メールアドレスを入力してください。パスワード変更のためのメールをお送りします。',
     loggedIn: req.session.loggedIn,
     userName: req.session.userName,
+    csrfToken: req.csrfToken(),
   });
 });
 
 // Eメールアドレスを受け取り、パスワード変更メールを送信する
-router.post('/', (req, res, next) => {
+router.post('/', csrfProtection, (req, res, next) => {
   (async () => {
     const { email } = req.body;
 
@@ -72,7 +73,7 @@ router.get('/emailed', (req, res, _next) => {
 
 // パスワード変更メールのリンクからアクセスしたとき
 // 新しいパスワードを入力するフォームを表示する
-router.get('/change', (req, res, next) => {
+router.get('/change', csrfProtection, (req, res, next) => {
   (async () => {
     const urlToken = req.query.t;
 
@@ -92,6 +93,7 @@ router.get('/change', (req, res, next) => {
         message: req.query.message,
         loggedIn: req.session.loggedIn,
         userName: req.session.userName,
+        csrfToken: req.csrfToken(),
       });
     }
 
@@ -109,7 +111,7 @@ router.get('/change', (req, res, next) => {
 });
 
 // 新しいパスワードを受け取る
-router.post('/change', (req, res, next) => {
+router.post('/change', csrfProtection, (req, res, next) => {
   (async () => {
     const { password1, password2 } = req.body;
     const urlToken = removeSlash(req.body.urlToken);

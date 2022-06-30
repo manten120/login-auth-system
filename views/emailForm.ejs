@@ -6,13 +6,16 @@
   </head>
   <body>
     <%- include('./header'); %>
+
     <h1><%= title %></h1>
     <p><%= message %></p>
+
     <% if(type === 'forgetPassword') { %>
       <form method="post" action="/forget-password" onsubmit="disableSubmit()">
     <% } else { %>
       <form method="post" action="/register" onsubmit="disableSubmit()">
     <% } %>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
       <div>
         <label for="email">Eメールアドレス：</label>
         <input type="email" id="email" name="email" required/>
@@ -25,6 +28,7 @@
         </button>
       </div>
     </form>
+    
   </body>
   <script>
     function disableSubmit() {

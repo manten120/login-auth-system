@@ -1,18 +1,24 @@
 import express from 'express';
 import { loginUseCase } from '../useCase/init';
+import { csrfProtection } from '../adapter/csrfProtection';
 
 const router = express.Router();
 
-router.get('/', (req, res, _next) => {
+router.get('/', csrfProtection, (req, res, _next) => {
   const from = req.query.from;
   if (from) {
     res.cookie('loginFrom', from, { expires: new Date(Date.now() + 600000) });
   }
 
-  res.render('login', { message: req.query.message, loggedIn: req.session.loggedIn, userName: req.session.userName });
+  res.render('login', {
+    message: req.query.message,
+    loggedIn: req.session.loggedIn,
+    userName: req.session.userName,
+    csrfToken: req.csrfToken(),
+  });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', csrfProtection, (req, res, next) => {
   (async () => {
     const { email, password } = req.body;
 

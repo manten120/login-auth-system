@@ -3,23 +3,27 @@ import { Email } from '../domain/user/Email';
 import { UrlToken } from '../domain/tempUser/UrlToken';
 import { createTempUserUseCase, checkUrlTokenUseCase, createUserUseCase } from '../useCase/init';
 import { removeSlash } from '../adapter/removeSlash';
+import { csrfProtection } from '../adapter/csrfProtection';
 
 const router = express.Router();
 
 // ユーザーアカウント作成を開始する
-router.get('/', (req, res, next) => {
+router.get('/', csrfProtection, (req, res, next) => {
   res.render('emailForm', {
     title: 'ユーザーアカウントを作成する画面1',
     message: req.query.message,
     type: 'registerUser',
     loggedIn: req.session.loggedIn,
     userName: req.session.userName,
+    csrfToken: req.csrfToken(),
   });
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', csrfProtection, async (req, res, next) => {
   (async () => {
     const email = req.body.email;
+
+    console.log( req.body )
 
     // 明らかにEメールアドレスではない値がPOSTされたとき
     if (typeof email !== 'string' || !Email.isValid(email)) {
@@ -71,7 +75,7 @@ router.get('/emailed', (req, res, _next) => {
 });
 
 // 登録手続きメールからアクセスしたとき
-router.get('/details', async (req, res, next) => {
+router.get('/details', csrfProtection, async (req, res, next) => {
   (async () => {
     const urlToken = req.query.t;
 
@@ -93,6 +97,7 @@ router.get('/details', async (req, res, next) => {
         message: req.query.message,
         loggedIn: req.session.loggedIn,
         userName: req.session.userName,
+        csrfToken: req.csrfToken(),
       });
     }
 
@@ -117,7 +122,7 @@ router.get('/details', async (req, res, next) => {
   });
 });
 
-router.post('/details', async (req, res, next) => {
+router.post('/details', csrfProtection, async (req, res, next) => {
   (async () => {
     const { name, password1, password2 } = req.body;
 
