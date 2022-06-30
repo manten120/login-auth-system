@@ -1,8 +1,8 @@
 import { ITempUserRepository } from '../domain/tempUser/ITempUserRepository';
 import { UrlToken } from '../domain/shared/UrlToken';
 import { IUserRepository } from '../domain/user/IUserRepository';
-import { Password } from '../domain/user/Password';
 import { User } from '../domain/user/User';
+import { Password } from '../domain/user/Password';
 import { UserName } from '../domain/user/UserName';
 
 type Result = {
@@ -38,7 +38,7 @@ export class CreateUserUseCase {
       return { ok: false, reason: 'expired' };
     }
 
-    // ユーザーを作成し永続化する
+    // 登録済みユーザーを作成し永続化する
     const userName = UserName.create(argsObj.userNameValue);
     const password = Password.create(argsObj.password1, argsObj.password2);
     const user = User.create(userName, tempUser.email, password);

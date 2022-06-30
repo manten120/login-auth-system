@@ -1,7 +1,7 @@
-import { Email } from '../domain/user/Email';
+import { ITempUserRepository } from '../domain/tempUser/ITempUserRepository';
 import { TempUser } from '../domain/tempUser/TempUser';
 import { IUserRepository } from '../domain/user/IUserRepository';
-import { ITempUserRepository } from '../domain/tempUser/ITempUserRepository';
+import { Email } from '../domain/user/Email';
 import { IMailer } from '../domain/mailer/IMailer';
 import { CreateUserMail } from '../domain/mailer/CreateUserMail';
 

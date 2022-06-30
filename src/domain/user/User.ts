@@ -3,6 +3,7 @@ import { Password } from './Password';
 import { UserId } from './UserId';
 import { UserName } from './UserName';
 
+// 登録済みユーザー
 export class User {
   private constructor(
     public readonly id: UserId,

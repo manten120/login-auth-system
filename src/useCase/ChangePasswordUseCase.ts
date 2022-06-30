@@ -1,6 +1,6 @@
-import { UrlToken } from '../domain/shared/UrlToken';
+import { IForgottenUserRepository } from '../domain/forgottenUser/IForgottenUserRepository'
 import { IUserRepository } from '../domain/user/IUserRepository';
-import { ForgottenUserRepository } from '../infra/repository/ForgottenUserRepository';
+import { UrlToken } from '../domain/shared/UrlToken';
 
 type Result = {
   ok: true;
@@ -11,7 +11,7 @@ type Result = {
 
 export class ChangePasswordUseCase {
   constructor(
-    private readonly forgottenUserRepository: ForgottenUserRepository,
+    private readonly forgottenUserRepository: IForgottenUserRepository,
     private readonly userRepository: IUserRepository
   ) {}
 

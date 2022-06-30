@@ -1,7 +1,6 @@
 import express from 'express';
 import { loginUseCase } from '../useCase/init';
 import { csrfProtection } from '../adapter/csrfProtection';
-import { Email } from '../domain/user/Email';
 
 const router = express.Router();
 

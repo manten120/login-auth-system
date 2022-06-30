@@ -3,7 +3,6 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import session from 'express-session';
 import helmet from 'helmet';
 import { indexRouter } from './routes/index';
 import { registerRouter } from './routes/register';
@@ -33,13 +32,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(sessionHandler);
 
-// TODO: 削除
-app.use((req, res, next) => {
-  console.log('app.ts', req.session);
-  next();
-});
-
 const loggedInCheck = (req: Request, res: Response, next: NextFunction) => {
+  console.log('loggedInCheck')
   if (!req.session.loggedIn) {
     return res.redirect(`/login?from=${req.originalUrl}`);
   }
@@ -54,12 +48,12 @@ app.use('/logout', logoutRouter);
 app.use('/forget-password', forgetPasswordRouter);
 
 // catch 404 and forward to error handler
-app.use((req, res, next) => {
+app.use((_req, _res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

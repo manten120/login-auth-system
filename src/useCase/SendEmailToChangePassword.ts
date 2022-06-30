@@ -1,9 +1,9 @@
 import { IUserRepository } from "../domain/user/IUserRepository";
-import { IMailer } from "../domain/mailer/IMailer";
-import { ChangePasswordMail } from "../domain/mailer/ChangePasswordMail";
 import { Email } from "../domain/user/Email";
 import { ForgottenUser } from "../domain/forgottenUser/ForgottenUser";
 import { IForgottenUserRepository } from "../domain/forgottenUser/IForgottenUserRepository";
+import { IMailer } from "../domain/mailer/IMailer";
+import { ChangePasswordMail } from "../domain/mailer/ChangePasswordMail";
 
 type Result = {
   ok: true;

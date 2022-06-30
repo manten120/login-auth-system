@@ -1,8 +1,6 @@
-import { Email } from '../domain/user/Email';
-import { User } from '../domain/user/User';
-import { Password } from '../domain/user/Password';
 import { IUserRepository } from '../domain/user/IUserRepository';
-import { UserName } from '../domain/user/UserName';
+import { Email } from '../domain/user/Email';
+import { Password } from '../domain/user/Password';
 
 type Result = {
   isSucceeded: true
@@ -21,7 +19,7 @@ export class LoginUseCase {
 
     const user = await this.userRepository.findByEmail(email);
 
-    // Eメールアドレスと一致するユーザーが存在しないとき
+    // Eメールアドレスと一致する登録済みユーザーが存在しないとき
     if (!user) {
       return { isSucceeded: false };
     }

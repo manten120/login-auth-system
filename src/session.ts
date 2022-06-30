@@ -6,13 +6,13 @@ const MySQLStore = mysqlExpress(session as any);
 
 const options = {
   host: 'mysql8',
-	port: 3306,
-	user: 'root',
-	password: process.env.MYSQL_ROOT_PASSWORD,
-	database: 'login_auth'
-}
+  port: 3306,
+  user: 'root',
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  database: 'login_auth',
+};
 
-const connection = mysql2.createPool(options)
+const connection = mysql2.createPool(options);
 const sessionStore = new MySQLStore({}, connection);
 
 export const sessionHandler = session({
@@ -24,7 +24,7 @@ export const sessionHandler = session({
   cookie: {
     maxAge: 10 * 60 * 1000, // 10min
   },
-})
+});
 
 declare module 'express-session' {
   interface SessionData {

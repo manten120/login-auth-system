@@ -1,7 +1,7 @@
-import { UrlToken } from '../shared/UrlToken';
 import { User } from '../user/User';
 import { UserId } from '../user/UserId';
 import { Email } from '../user/Email';
+import { UrlToken } from '../shared/UrlToken';
 import { RepeatedTimes } from '../shared/RepeatedTimes';
 import { ExpiredAt } from '../shared/ExpiredAt';
 

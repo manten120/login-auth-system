@@ -1,8 +1,8 @@
-import { ForgottenUserModel } from '../db/models/ForgottenUserModel';
 import { IForgottenUserRepository } from '../../domain/forgottenUser/IForgottenUserRepository';
 import { ForgottenUser } from '../../domain/forgottenUser/ForgottenUser';
 import { Email } from '../../domain/user/Email';
 import { UrlToken } from '../../domain/shared/UrlToken';
+import { ForgottenUserModel } from '../db/models/ForgottenUserModel';
 
 export class ForgottenUserRepository implements IForgottenUserRepository {
   insert = async (forgottenUser: ForgottenUser) => {

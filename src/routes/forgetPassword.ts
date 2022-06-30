@@ -1,10 +1,10 @@
 import express from 'express';
-import { csrfProtection } from '../adapter/csrfProtection';
-import { UrlToken } from '../domain/shared/UrlToken';
 import { Email } from '../domain/user/Email';
+import { UrlToken } from '../domain/shared/UrlToken';
 import { sendEmailToChangePasswordUseCase } from '../useCase/init';
 import { checkUrlTokenToChangePasswordUseCase } from '../useCase/init';
 import { changePasswordUseCase } from '../useCase/init';
+import { csrfProtection } from '../adapter/csrfProtection';
 
 const router = express.Router();
 
@@ -39,7 +39,7 @@ router.post('/', csrfProtection, (req, res, next) => {
       return res.redirect('/forget-password/emailed');
     }
 
-    // Eメールアドレスに対応するユーザーが存在しないとき
+    // Eメールアドレスに対応する登録済みユーザーが存在しないとき
     if (result.reason === 'userNotExists') {
       return res.redirect('/forget-password/emailed');
     }

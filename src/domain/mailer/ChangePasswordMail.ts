@@ -1,9 +1,10 @@
 import { port } from '../../bin/www';
+import { IMail } from './IMail';
 import { Email } from '../user/Email';
 import { UrlToken } from '../shared/UrlToken';
 
 // パスワード変更時に送るメール
-export class ChangePasswordMail {
+export class ChangePasswordMail implements IMail {
   // 送信元の名前
   readonly from = 'login-auth-system';
 
