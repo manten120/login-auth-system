@@ -11,12 +11,12 @@ const password = process.env.ENCRYPT_PASSWORD!;
 // console.log(crypto.randomBytes(16).toString('base64'))
 const salt = process.env.ENCRYPT_SALT!;
 
-// IV を生成
-const iv = crypto.randomBytes(16);
-
 export const encrypt = (data: string) => {
   // 鍵を生成
   const key = crypto.scryptSync(password, salt, 32);
+
+  // IV を生成
+  const iv = crypto.randomBytes(16);
 
   // 暗号器を生成
   const cipher = crypto.createCipheriv(algorithm, key, iv);
