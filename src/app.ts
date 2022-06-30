@@ -50,7 +50,7 @@ declare module 'express-session' {
 // TODO: 設定見直し
 app.use(
   session({
-    name: 'sessionIdddd',
+    name: 'BMDv21zlrGbYWb',
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,

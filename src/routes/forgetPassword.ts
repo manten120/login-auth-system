@@ -97,10 +97,10 @@ router.get('/change', csrfProtection, (req, res, next) => {
     }
 
     if (result.reason === 'expired') {
-      return res.redirect('/forget-email?message=期限切れです。最初からやり直してください。');
+      return res.redirect('/forget-password?message=期限切れです。最初からやり直してください。');
     }
 
-    return res.redirect('/forget-email?message=無効なURLです。最初からやり直してください。');
+    return res.redirect('/forget-password?message=無効なURLです。最初からやり直してください。');
   })().catch((e) => {
     if (req.app.get('env') === 'production') {
       res.redirect('/forget-password?message=申し訳ありません。しばらく時間をおいてから試してください。');
