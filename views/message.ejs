@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <%- include('./header'); %>
+    <h1><%= title %></h1>
+    <p><%= message %></p>
+  </body>
+  <script>
+    window.onload = function () {
+      history.pushState(null, null, null);
+
+      window.addEventListener('popstate', function (e) {
+        history.pushState(null, null, null);
+        return;
+      });
+    };
+  </script>
+</html>

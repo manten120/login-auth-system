@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <%- include('./header'); %>
+    <h1><%= title %></h1>
+    <form method="post" action="<%= postTo %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+      <input hidden type="text" id="urlToken" name="urlToken" value="<%= urlToken %>"/>
+      <% if (type === "registerUser") { %>
+        <div>
+          <label for="name">ユーザー名：</label>
+          <input type="text" id="name" name="name" required placeholder="30文字まで"/>
+        </div>
+        <div>
+      <% } %>
+
+        <label for="password1">パスワード：</label>
+        <input type="password" id="password1" name="password1" required pattern="[a-zA-Z0-9]{8,64}" placeholder="半角英数で8~64文字"/>
+        <button type="button" id="passwordButton1" onclick="toggleVisible(1)">表示</button>
+
+      </div>
+      <div>
+        <label for="password2">パスワード：</label>
+        <input type="password" id="password2" name="password2" required pattern="[a-zA-Z0-9]{8,64}" placeholder="確認用"/>
+        <button type="button" id="passwordButton2" onclick="toggleVisible(2)">表示</button>
+      </div>
+      <div>
+        <button type="submit" onclick="twoPasswordsMatch()">決定</button>
+      </div>
+    </form>
+    <div><%= message %></div>
+  </body>
+
+  <script>
+    // パスワード表示・非表示を切り替える
+    const toggleVisible = (number) => {
+      const passwordInput = document.getElementById(`password${number}`);
+      const passwordButton = document.getElementById(`passwordButton${number}`);
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordButton.textContent = '非表示';
+        return;
+      }
+      passwordInput.type = 'password';
+      passwordButton.textContent = '表示';
+    }
+
+    // パスワードが一致するかチェックする
+    const twoPasswordsMatch = () => {
+      const password1 = document.getElementById('password1');
+      const password2 = document.getElementById('password2');
+      if (password1.value !== password2.value) {
+        password2.setCustomValidity("入力値が一致しません。");
+        password1.addEventListener('input', () => {
+          password1.setCustomValidity("");
+          password2.setCustomValidity("");
+        })
+        password2.addEventListener('input', () => {
+          password1.setCustomValidity("");
+          password2.setCustomValidity("");
+        })
+      }
+    }
+  </script>
+</html>
