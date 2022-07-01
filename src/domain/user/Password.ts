@@ -7,17 +7,23 @@ export class Password {
     if (this.canSave) {
       return this._hashedValue;
     }
-    throw new Error('ユーザー登録時またはパスワード変更時に生成したPasswordインスタンスからのみ値を取り出すことができます');
+    throw new Error(
+      'ユーザー登録時またはパスワード変更時に生成したPasswordインスタンスからのみ値を取り出すことができます'
+    );
   }
+
+  static readonly lengthAndCharacterIsValid = (passwordPlainValue: string) => {
+    if (!/[a-zA-Z0-9]{8,64}/.test(passwordPlainValue)) {
+      throw new Error('パスワードは半角英数からなる8~64文字の文字列です');
+    }
+  };
 
   static readonly create = (passwordPlainValue1: string, passwordPlainValue2: string) => {
     if (passwordPlainValue1 !== passwordPlainValue2) {
       throw new Error('2つのパスワードが一致しません');
     }
 
-    if (!/[a-zA-Z0-9]{8,64}/.test(passwordPlainValue1)) {
-      throw new Error('パスワードは半角英数からなる8~64文字の文字列です');
-    }
+    Password.lengthAndCharacterIsValid(passwordPlainValue1);
 
     const hashedValue = hash(passwordPlainValue1);
 
@@ -25,9 +31,7 @@ export class Password {
   };
 
   static readonly createToLogin = (passwordPlainValue: string) => {
-    if (!/[a-zA-Z0-9]{8,64}/.test(passwordPlainValue)) {
-      throw new Error('パスワードは半角英数からなる8~64文字の文字列です');
-    }
+    Password.lengthAndCharacterIsValid(passwordPlainValue);
 
     const hashedValue = hash(passwordPlainValue);
 
@@ -38,5 +42,6 @@ export class Password {
 
   readonly equals = (password: Password) => this._hashedValue === password._hashedValue;
 
-  readonly change = (passwordPlainValue1: string, passwordPlainValue2: string) => Password.create(passwordPlainValue1, passwordPlainValue2);
+  readonly change = (passwordPlainValue1: string, passwordPlainValue2: string) =>
+    Password.create(passwordPlainValue1, passwordPlainValue2);
 }
