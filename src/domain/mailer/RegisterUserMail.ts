@@ -1,6 +1,7 @@
 import { IMail } from './IMail';
 import { Email } from '../user/Email';
 import { UrlToken } from '../shared/UrlToken';
+import { ExpiredAt } from '../shared/ExpiredAt';
 
 // ユーザーアカウント登録開始時に送るメール
 export class RegisterUserMail implements IMail {
@@ -18,7 +19,7 @@ export class RegisterUserMail implements IMail {
 
   constructor(email: Email, urlToken: UrlToken) {
     // TODO: URLを変更
-    this.text = `30分以内に下記のURLからご登録下さい。
+    this.text = `${ExpiredAt.REMAINING_MINUTES}分以内に下記のURLからご登録下さい。
       \n\n http://localhost:8000/register/details?t=${urlToken.value}`;
 
     this.to = email.plainValue();
