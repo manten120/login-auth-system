@@ -18,7 +18,7 @@ initDB();
 
 const app = express();
 
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 
 // view engine setup
 app.set('views', path.join(__dirname, '../views'));
@@ -33,7 +33,6 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(sessionHandler);
 
 const loggedInCheck = (req: Request, res: Response, next: NextFunction) => {
-  console.log('loggedInCheck')
   if (!req.session.loggedIn) {
     return res.redirect(`/login?from=${req.originalUrl}`);
   }
