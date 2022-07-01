@@ -1,8 +1,7 @@
 import express from 'express';
-import { Email } from '../domain/user/Email';
-import { UrlToken } from '../domain/shared/UrlToken';
 import { registerTempUserUseCase, checkUrlTokenUseCase, registerUserUseCase } from '../useCase/init';
 import { csrfProtection } from '../adapter/csrfProtection';
+import { emailIsValid, passwordIdValid, urlTokenIsValid, userNameIsValid } from './validation';
 
 const router = express.Router();
 
@@ -22,8 +21,7 @@ router.post('/', csrfProtection, async (req, res, next) => {
   (async () => {
     const email = req.body.email;
 
-    // 明らかにEメールアドレスではない値がPOSTされたとき
-    if (typeof email !== 'string' || !Email.isValid(email)) {
+    if (!emailIsValid(email)) {
       return res.redirect('/register');
     }
 
@@ -53,7 +51,7 @@ router.post('/', csrfProtection, async (req, res, next) => {
       );
     }
 
-    // TODO: この辺の処理
+    return res.redirect('/register?message=申し訳ありません。しばらく時間をおいてから試してください。');
   })().catch((e) => {
     if (req.app.get('env') === 'production') {
       res.redirect('/register?message=申し訳ありません。しばらく時間をおいてから試してください。');
@@ -77,12 +75,12 @@ router.get('/details', csrfProtection, async (req, res, next) => {
     const urlToken = req.query.t;
 
     // urlTokenがundefinedまたはurlTokenのフォーマットがuuidでないとき
-    if (typeof urlToken !== 'string' || !UrlToken.isUUID(urlToken)) {
+    if (!urlTokenIsValid(urlToken)) {
       return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
     }
 
     // urlTokenが有効かチェック
-    const result = await checkUrlTokenUseCase.execute(urlToken);
+    const result = await checkUrlTokenUseCase.execute(urlToken as string);
 
     // 有効ならばフォームを表示
     if (result.ok) {
@@ -109,8 +107,7 @@ router.get('/details', csrfProtection, async (req, res, next) => {
       return res.redirect('/register?message=無効なURLです。最初からやり直してください。');
     }
 
-    // TODO: この辺の処理
-    // return res.redirect('/register?message=予期せぬエラー。申し訳ありません。しばらく時間をおいてから試してください。');
+    return res.redirect('/register?message=申し訳ありません。しばらく時間をおいてから試してください。');
   })().catch((e) => {
     if (req.app.get('env') === 'production') {
       res.redirect('/register?message=申し訳ありません。しばらく時間をおいてから試してください。');
@@ -124,13 +121,12 @@ router.post('/details', csrfProtection, async (req, res, next) => {
     const { urlToken, name, password1, password2 } = req.body;
 
     if (
-      typeof name !== 'string' &&
-      typeof password1 !== 'string' &&
-      typeof password2 !== 'string' &&
-      typeof urlToken !== 'string'
+      !userNameIsValid(name) ||
+      !passwordIdValid(password1) ||
+      !passwordIdValid(password2) ||
+      !urlTokenIsValid(urlToken)
     ) {
-      // TODO: この辺の処理
-      // エラー
+      return res.redirect('/register?message=最初からやり直してください。');
     }
 
     const result = await registerUserUseCase.execute({
@@ -143,7 +139,12 @@ router.post('/details', csrfProtection, async (req, res, next) => {
     if (result.ok) {
       req.session.loggedIn = true;
       req.session.userName = name;
-      res.redirect('/user'); // res.send()だとセッションが保存されない
+      req.session.save((err) => {
+        if (err) {
+          res.redirect('/login');
+        }
+        res.redirect('/');
+      });
       return;
     }
 
@@ -152,7 +153,9 @@ router.post('/details', csrfProtection, async (req, res, next) => {
       return res.redirect('/register?message=期限切れです。最初からやり直してください。');
     }
 
-    // TODO: この辺の処理
+    return res.redirect(
+      `/register/details?message=申し訳ありません。しばらく時間をおいてから試してください。&t=${urlToken}`
+    );
   })().catch((e) => {
     if (req.app.get('env') === 'production') {
       res.redirect(

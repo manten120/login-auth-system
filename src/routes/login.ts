@@ -1,6 +1,7 @@
 import express from 'express';
 import { loginUseCase } from '../useCase/init';
 import { csrfProtection } from '../adapter/csrfProtection';
+import { emailIsValid, passwordIdValid } from './validation';
 
 const router = express.Router();
 
@@ -8,7 +9,7 @@ router.get('/', csrfProtection, (req, res, _next) => {
   const from = req.query.from;
   if (from) {
     // ログイン後の画面からログイン画面にリダイレクトしたとき
-    res.cookie('loginFrom', from, { expires: new Date(Date.now() + 10*60*1000) });
+    res.cookie('loginFrom', from, { expires: new Date(Date.now() + 10 * 60 * 1000) });
   } else {
     res.clearCookie('loginFrom');
   }
@@ -25,13 +26,9 @@ router.post('/', csrfProtection, (req, res, next) => {
   (async () => {
     const { email, password } = req.body;
 
-    if (typeof email !== 'string' || typeof password !== 'string') {
+    if (!emailIsValid(email) || !passwordIdValid(password)) {
       return res.redirect('/login?message=ログインに失敗しました');
     }
-
-    // if (!Email.isValid(email) && !Password.validation(password)) {
-    //   return res.redirect('/login?message=ログインに失敗しました');
-    // }
 
     const result = await loginUseCase.execute(email, password);
 
