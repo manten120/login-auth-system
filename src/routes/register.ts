@@ -60,6 +60,7 @@ router.post('/', csrfProtection, async (req, res, next) => {
   });
 });
 
+// 登録手続きメールを送信した旨を表示する
 router.get('/emailed', (req, res, _next) => {
   res.render('message', {
     title: 'メールを送信しました',
