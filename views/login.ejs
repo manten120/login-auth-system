@@ -7,6 +7,8 @@
   <body>
     <%- include('./header'); %>
     <h1>ログイン</h1>
+    <div><%= message %></div>
+    
     <form method="post" action="/login">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
       <div>
@@ -21,7 +23,7 @@
         <button type="submit">決定</button>
       </div>
     </form>
-    <div><%= message %></div>
+    
     <div>
       <a href="/forget-password">パスワードをお忘れですか?</a>
     </div>
