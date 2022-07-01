@@ -6,10 +6,10 @@ import { csrfProtection } from '../adapter/csrfProtection';
 
 const router = express.Router();
 
-// ユーザーアカウント作成を開始する
+// ユーザーアカウント登録を開始する
 router.get('/', csrfProtection, (req, res, _next) => {
   res.render('emailForm', {
-    title: 'ユーザーアカウントを作成する画面1',
+    title: 'ユーザーアカウント登録画面1',
     message: req.query.message,
     type: 'registerUser',
     loggedIn: req.session.loggedIn,
@@ -87,7 +87,7 @@ router.get('/details', csrfProtection, async (req, res, next) => {
     // 有効ならばフォームを表示
     if (result.ok) {
       return res.render('registerForm', {
-        title: 'ユーザーアカウントを作成する画面2',
+        title: 'ユーザーアカウント登録画面2',
         type: 'registerUser',
         urlToken,
         postTo: '/register/details',

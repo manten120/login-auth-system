@@ -3,27 +3,29 @@ import { TempUser } from '../domain/tempUser/TempUser';
 import { IUserRepository } from '../domain/user/IUserRepository';
 import { Email } from '../domain/user/Email';
 import { IMailer } from '../domain/mailer/IMailer';
-import { CreateUserMail } from '../domain/mailer/CreateUserMail';
+import { RegisterUserMail } from '../domain/mailer/RegisterUserMail';
 
-type Result = {
-  ok: false;
-  reason: 'userAlreadyRegistered' | 'sendingEmailFailed' | 'exceeded';
-} | {
-  ok: true;
-}
+type Result =
+  | {
+      ok: false;
+      reason: 'userAlreadyRegistered' | 'sendingEmailFailed' | 'exceeded';
+    }
+  | {
+      ok: true;
+    };
 
-export class CreateTempUserUseCase {
+export class RegisterTempUserUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly tempUserRepository: ITempUserRepository,
     private readonly mailer: IMailer
   ) {}
 
-  private readonly sendCreateUserMailTo = async (tempUser: TempUser) => {
-    const createUserMail = new CreateUserMail(tempUser.email, tempUser.urlToken);
-    const isSucceeded = await this.mailer.send(createUserMail);
+  private readonly sendRegisterUserMailTo = async (tempUser: TempUser) => {
+    const registerUserMail = new RegisterUserMail(tempUser.email, tempUser.urlToken);
+    const isSucceeded = await this.mailer.send(registerUserMail);
     return isSucceeded;
-  }
+  };
 
   readonly execute = async (emailPlainValue: string): Promise<Result> => {
     const email = Email.create(emailPlainValue);
@@ -39,12 +41,12 @@ export class CreateTempUserUseCase {
 
     // 同一メールアドレスの仮登録ユーザーが存在しないとき
     if (!tempUser) {
-      // tempUserを作成、永続化
+      // 仮登録ユーザーを作成、永続化
       const newTempUser = TempUser.create(email);
       await this.tempUserRepository.insert(newTempUser);
 
       // 登録手続きメールを送信
-      const isSucceeded = await this.sendCreateUserMailTo(newTempUser);
+      const isSucceeded = await this.sendRegisterUserMailTo(newTempUser);
 
       if (isSucceeded) {
         return { ok: true };
@@ -58,13 +60,12 @@ export class CreateTempUserUseCase {
 
     // 仮登録済みのとき
     if (tempUser && tempUser.canRepeatReceivingMail()) {
-
       // 仮登録を繰り返した回数を更新する
       tempUser.repeatReceivingMail();
       this.tempUserRepository.update(tempUser);
 
       // 登録手続きメールを送信
-      const isSucceeded = await this.sendCreateUserMailTo(tempUser);
+      const isSucceeded = await this.sendRegisterUserMailTo(tempUser);
 
       if (isSucceeded) {
         return { ok: true };

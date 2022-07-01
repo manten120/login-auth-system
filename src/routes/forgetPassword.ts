@@ -135,7 +135,7 @@ router.post('/change', csrfProtection, (req, res, next) => {
 
     if (result.reason === 'userNotExist') {
       return res.redirect(
-        '/register?message=アカウントが存在しません。新規作成する場合はメールアドレスを登録してください'
+        '/register?message=アカウントが存在しません。新規登録する場合はメールアドレスを登録してください'
       );
     }
 

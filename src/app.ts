@@ -37,6 +37,7 @@ const loggedInCheck = (req: Request, res: Response, next: NextFunction) => {
   if (!req.session.loggedIn) {
     return res.redirect(`/login?from=${req.originalUrl}`);
   }
+  res.clearCookie('loginFrom');
   next();
 };
 

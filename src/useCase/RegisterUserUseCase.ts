@@ -5,14 +5,16 @@ import { User } from '../domain/user/User';
 import { Password } from '../domain/user/Password';
 import { UserName } from '../domain/user/UserName';
 
-type Result = {
-  ok: false;
-  reason: 'expired'
-} | {
-  ok: true;
-}
+type Result =
+  | {
+      ok: false;
+      reason: 'expired';
+    }
+  | {
+      ok: true;
+    };
 
-export class CreateUserUseCase {
+export class RegisterUserUseCase {
   constructor(
     private readonly tempUserRepository: ITempUserRepository,
     private readonly userRepository: IUserRepository

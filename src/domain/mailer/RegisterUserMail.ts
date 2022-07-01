@@ -3,7 +3,7 @@ import { Email } from '../user/Email';
 import { UrlToken } from '../shared/UrlToken';
 
 // ユーザーアカウント登録開始時に送るメール
-export class CreateUserMail implements IMail {
+export class RegisterUserMail implements IMail {
   // 送信元の名前
   readonly from = 'login-auth-system';
 

@@ -1,10 +1,10 @@
 import { TempUserRepository } from '../infra/repository/TempUserRepository';
 import { UserRepository } from '../infra/repository/UserRepository';
 import { ForgottenUserRepository } from '../infra/repository/ForgottenUserRepository';
-import { CreateTempUserUseCase } from '../useCase/CreateTempUserUseCase';
+import { RegisterTempUserUseCase } from '../useCase/RegisterTempUserUseCase';
 import { mailer } from '../infra/Mailer';
 import { CheckUrlTokenUseCase } from '../useCase/CheckUrlTokenUseCase';
-import { CreateUserUseCase } from '../useCase/CreateUserUseCase';
+import { RegisterUserUseCase } from '../useCase/RegisterUserUseCase';
 import { LoginUseCase } from './LoginUseCase';
 import { SendEmailToChangePasswordUseCase } from './SendEmailToChangePassword';
 import { CheckUrlTokenToChangePasswordUseCase } from './CheckUrlTokenToChangePasswordUseCase';
@@ -14,9 +14,9 @@ const tempUserRepository = new TempUserRepository();
 const userRepository = new UserRepository();
 const forgottenUserRepository = new ForgottenUserRepository();
 
-export const createTempUserUseCase = new CreateTempUserUseCase(userRepository, tempUserRepository, mailer);
+export const registerTempUserUseCase = new RegisterTempUserUseCase(userRepository, tempUserRepository, mailer);
 export const checkUrlTokenUseCase = new CheckUrlTokenUseCase(tempUserRepository);
-export const createUserUseCase = new CreateUserUseCase(tempUserRepository, userRepository);
+export const registerUserUseCase = new RegisterUserUseCase(tempUserRepository, userRepository);
 export const loginUseCase = new LoginUseCase(userRepository);
 export const sendEmailToChangePasswordUseCase = new SendEmailToChangePasswordUseCase(
   userRepository,
