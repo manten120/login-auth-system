@@ -64,7 +64,6 @@ router.get('/emailed', (req, res, _next) => {
   res.render('message', {
     title: 'メールを送信しました',
     message: 'メールに記載した手順でパスワードを変更してください',
-    link: '/forget-password',
     loggedIn: req.session.loggedIn,
     userName: req.session.userName,
   });
