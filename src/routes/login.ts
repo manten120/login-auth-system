@@ -7,7 +7,10 @@ const router = express.Router();
 router.get('/', csrfProtection, (req, res, _next) => {
   const from = req.query.from;
   if (from) {
-    res.cookie('loginFrom', from, { expires: new Date(Date.now() + 600000) });
+    // ログイン後の画面からログイン画面にリダイレクトしたとき
+    res.cookie('loginFrom', from, { expires: new Date(Date.now() + 10*60*1000) });
+  } else {
+    res.clearCookie('loginFrom');
   }
 
   res.render('login', {

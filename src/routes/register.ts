@@ -1,13 +1,13 @@
 import express from 'express';
 import { Email } from '../domain/user/Email';
 import { UrlToken } from '../domain/shared/UrlToken';
-import { createTempUserUseCase, checkUrlTokenUseCase, createUserUseCase } from '../useCase/init';
+import { registerTempUserUseCase, checkUrlTokenUseCase, registerUserUseCase } from '../useCase/init';
 import { csrfProtection } from '../adapter/csrfProtection';
 
 const router = express.Router();
 
 // ユーザーアカウント作成を開始する
-router.get('/', csrfProtection, (req, res, next) => {
+router.get('/', csrfProtection, (req, res, _next) => {
   res.render('emailForm', {
     title: 'ユーザーアカウントを作成する画面1',
     message: req.query.message,
@@ -27,7 +27,7 @@ router.post('/', csrfProtection, async (req, res, next) => {
       return res.redirect('/register');
     }
 
-    const result = await createTempUserUseCase.execute(email);
+    const result = await registerTempUserUseCase.execute(email);
 
     // 仮登録ユーザーを作成できたとき
     if (result.ok) {
@@ -133,7 +133,7 @@ router.post('/details', csrfProtection, async (req, res, next) => {
       // エラー
     }
 
-    const result = await createUserUseCase.execute({
+    const result = await registerUserUseCase.execute({
       userNameValue: name,
       urlTokenValue: urlToken,
       password1,
